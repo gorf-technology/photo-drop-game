@@ -1,4 +1,4 @@
-const CACHE = 'photo-drop-v1';
+const CACHE = 'face-drop-v1';
 const FILES = [
   '/photo-drop-game/',
   '/photo-drop-game/index.html',
@@ -7,6 +7,15 @@ const FILES = [
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES)));
+  self.skipWaiting();
+});
+
+self.addEventListener('activate', e => {
+  e.waitUntil(
+    caches.keys().then(keys =>
+      Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
+    )
+  );
 });
 
 self.addEventListener('fetch', e => {
