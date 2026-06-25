@@ -11,9 +11,6 @@
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       background: #000;
-      display: flex;
-      align-items: center;
-      justify-content: center;
       min-height: 100vh;
       font-family: sans-serif;
       overflow: hidden;
@@ -26,23 +23,32 @@
       left: 50%;
       transform: translateX(-50%);
       display: flex;
-      gap: 12px;
+      gap: 10px;
       z-index: 10;
+      align-items: center;
     }
     .btn {
       background: rgba(255,255,255,0.12);
       color: #fff;
       border: 1.5px solid rgba(255,255,255,0.35);
       border-radius: 50px;
-      padding: 13px 26px;
-      font-size: 15px;
+      padding: 12px 22px;
+      font-size: 14px;
       cursor: pointer;
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
-      transition: background 0.15s;
       white-space: nowrap;
+      transition: background 0.12s;
     }
-    .btn:active { background: rgba(255,255,255,0.28); }
+    .btn:active { background: rgba(255,255,255,0.3); }
+    #shakeBtn {
+      background: rgba(255,100,50,0.18);
+      border-color: rgba(255,120,60,0.5);
+      color: #ff9966;
+    }
+    #shakeBtn:active { background: rgba(255,100,50,0.45); }
+
+    /* 카메라 모달 */
     #cameraModal {
       display: none;
       position: fixed;
@@ -81,25 +87,15 @@
       font-size: 14px;
       cursor: pointer;
     }
-    #hint {
-      position: fixed;
-      top: 30px;
-      left: 50%;
-      transform: translateX(-50%);
-      color: rgba(255,255,255,0.35);
-      font-size: 12px;
-      pointer-events: none;
-      white-space: nowrap;
-    }
     #fileInput, #snapCanvas { display: none; }
   </style>
 </head>
 <body>
-<p id="hint">흔들면 사진이 튀어요</p>
 <canvas id="canvas"></canvas>
 <div id="ui">
-  <button class="btn" id="cameraBtn">📷 촬영</button>
-  <button class="btn" id="uploadBtn">🖼 갤러리</button>
+  <button class="btn" id="cameraBtn">📷</button>
+  <button class="btn" id="uploadBtn">🖼</button>
+  <button class="btn" id="shakeBtn">🫨 흔들기</button>
   <input type="file" id="fileInput" accept="image/*" multiple>
 </div>
 <div id="cameraModal">
@@ -118,6 +114,7 @@ const ctx = canvas.getContext('2d');
 const fileInput = document.getElementById('fileInput');
 const uploadBtn = document.getElementById('uploadBtn');
 const cameraBtn = document.getElementById('cameraBtn');
+const shakeBtn = document.getElementById('shakeBtn');
 const cameraModal = document.getElementById('cameraModal');
 const video = document.getElementById('video');
 const shootBtn = document.getElementById('shootBtn');
@@ -125,7 +122,6 @@ const closeCamBtn = document.getElementById('closeCamBtn');
 const switchCamBtn = document.getElementById('switchCamBtn');
 const snapCanvas = document.getElementById('snapCanvas');
 
-// 캔버스 = 화면 크기
 function resize() {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
@@ -134,10 +130,11 @@ resize();
 window.addEventListener('resize', resize);
 
 // 물리 상수
-const GRAVITY = 0.5;
-const FRICTION = 0.78;
-const BOUNCE = 0.25;
-const ANGULAR_DAMP = 0.88;
+const GRAVITY = 0.55;
+const FLOOR_FRICTION = 0.75;
+const BOUNCE = 0.22;
+const AIR_FRICTION = 0.995;
+const ANGULAR_DAMP = 0.85;
 
 const objects = [];
 
@@ -148,21 +145,22 @@ class PhotoObject {
     this.y = y;
     this.w = w;
     this.h = h;
-    this.vx = (Math.random() - 0.5) * 3;
+    this.vx = (Math.random() - 0.5) * 4;
     this.vy = 0;
-    this.angle = (Math.random() - 0.5) * 0.3;
-    this.av = (Math.random() - 0.5) * 0.03; // angular velocity
+    this.angle = (Math.random() - 0.5) * 0.2;
+    this.av = (Math.random() - 0.5) * 0.02;
     this.isDragging = false;
     this.lastX = x;
     this.lastY = y;
-    // 반지름 (충돌용 근사)
-    this.r = Math.max(w, h) * 0.45;
+    // 충돌 반지름: 사진 크기의 절반 (짧은 쪽 기준)
+    this.r = Math.min(w, h) * 0.48;
   }
 
   update() {
     if (this.isDragging) return;
 
     this.vy += GRAVITY;
+    this.vx *= AIR_FRICTION;
     this.x += this.vx;
     this.y += this.vy;
     this.angle += this.av;
@@ -170,28 +168,28 @@ class PhotoObject {
 
     // 바닥
     const floor = canvas.height - this.h * 0.5;
-    if (this.y > floor) {
+    if (this.y >= floor) {
       this.y = floor;
       this.vy *= -BOUNCE;
-      this.vx *= FRICTION;
-      this.av *= FRICTION;
-      if (Math.abs(this.vy) < 0.8) this.vy = 0;
+      this.vx *= FLOOR_FRICTION;
+      this.av *= FLOOR_FRICTION;
+      if (Math.abs(this.vy) < 1.2) this.vy = 0;
     }
 
     // 왼쪽 벽
     const leftWall = this.w * 0.5;
-    if (this.x < leftWall) {
+    if (this.x <= leftWall) {
       this.x = leftWall;
       this.vx = Math.abs(this.vx) * BOUNCE;
-      this.av *= -0.5;
+      this.av *= -0.4;
     }
 
     // 오른쪽 벽
     const rightWall = canvas.width - this.w * 0.5;
-    if (this.x > rightWall) {
+    if (this.x >= rightWall) {
       this.x = rightWall;
       this.vx = -Math.abs(this.vx) * BOUNCE;
-      this.av *= -0.5;
+      this.av *= -0.4;
     }
   }
 
@@ -199,10 +197,9 @@ class PhotoObject {
     ctx.save();
     ctx.translate(this.x, this.y);
     ctx.rotate(this.angle);
-    // 살짝 그림자
-    ctx.shadowColor = 'rgba(0,0,0,0.5)';
-    ctx.shadowBlur = 8;
-    ctx.shadowOffsetY = 4;
+    ctx.shadowColor = 'rgba(0,0,0,0.6)';
+    ctx.shadowBlur = 10;
+    ctx.shadowOffsetY = 5;
     ctx.drawImage(this.img, -this.w / 2, -this.h / 2, this.w, this.h);
     ctx.restore();
   }
@@ -212,51 +209,72 @@ class PhotoObject {
   }
 }
 
-// 사진끼리 충돌 처리 (원형 근사)
+// 사진끼리 충돌 (원형 근사, 여러 번 반복으로 쌓임 안정화)
 function resolveCollisions() {
-  for (let i = 0; i < objects.length; i++) {
-    for (let j = i + 1; j < objects.length; j++) {
-      const a = objects[i];
-      const b = objects[j];
-      if (a.isDragging || b.isDragging) continue;
+  const iterations = 3;
+  for (let iter = 0; iter < iterations; iter++) {
+    for (let i = 0; i < objects.length; i++) {
+      for (let j = i + 1; j < objects.length; j++) {
+        const a = objects[i];
+        const b = objects[j];
 
-      const dx = b.x - a.x;
-      const dy = b.y - a.y;
-      const dist = Math.sqrt(dx * dx + dy * dy);
-      const minDist = (a.r + b.r) * 0.72;
+        const dx = b.x - a.x;
+        const dy = b.y - a.y;
+        const distSq = dx * dx + dy * dy;
+        const minDist = a.r + b.r;
 
-      if (dist < minDist && dist > 0.01) {
+        if (distSq >= minDist * minDist || distSq < 0.001) continue;
+
+        const dist = Math.sqrt(distSq);
         const nx = dx / dist;
         const ny = dy / dist;
-        const overlap = minDist - dist;
+        const overlap = (minDist - dist) * 0.5;
 
-        // 겹침 분리
-        a.x -= nx * overlap * 0.5;
-        a.y -= ny * overlap * 0.5;
-        b.x += nx * overlap * 0.5;
-        b.y += ny * overlap * 0.5;
+        // 드래그 중인 건 밀리지 않게
+        if (!a.isDragging) { a.x -= nx * overlap; a.y -= ny * overlap; }
+        if (!b.isDragging) { b.x += nx * overlap; b.y += ny * overlap; }
 
-        // 속도 교환 (탄성 충돌)
-        const dvx = a.vx - b.vx;
-        const dvy = a.vy - b.vy;
-        const dot = dvx * nx + dvy * ny;
-        if (dot > 0) {
-          const impulse = dot * 0.45;
+        // 속도 반응
+        const relVx = a.vx - b.vx;
+        const relVy = a.vy - b.vy;
+        const dot = relVx * nx + relVy * ny;
+
+        if (dot <= 0) continue;
+
+        const restitution = 0.3;
+        const impulse = dot * (1 + restitution) * 0.5;
+
+        if (!a.isDragging) {
           a.vx -= impulse * nx;
           a.vy -= impulse * ny;
+          a.av += impulse * 0.03 * (Math.random() - 0.5);
+        }
+        if (!b.isDragging) {
           b.vx += impulse * nx;
           b.vy += impulse * ny;
-          // 회전 영향
-          a.av += impulse * 0.04 * (Math.random() - 0.5);
-          b.av -= impulse * 0.04 * (Math.random() - 0.5);
+          b.av -= impulse * 0.03 * (Math.random() - 0.5);
         }
       }
     }
   }
 }
 
+// 흔들기
+function shakeAll() {
+  objects.forEach(o => {
+    if (!o.isDragging) {
+      o.vx += (Math.random() - 0.5) * 22;
+      o.vy += (Math.random() - 0.7) * 20;
+      o.av += (Math.random() - 0.5) * 0.35;
+    }
+  });
+}
+
+shakeBtn.addEventListener('click', shakeAll);
+
+// 사진 추가
 function addPhoto(imgEl) {
-  const maxW = Math.min(canvas.width * 0.36, 220);
+  const maxW = Math.min(canvas.width * 0.36, 210);
   const ratio = imgEl.height / imgEl.width;
   const w = maxW;
   const h = maxW * ratio;
@@ -377,55 +395,6 @@ canvas.addEventListener('touchmove', (e) => {
 canvas.addEventListener('touchend', () => {
   if (dragTarget) { dragTarget.isDragging = false; dragTarget = null; }
 });
-
-// 흔들기 감지 (DeviceMotion)
-let lastShake = 0;
-let lastAx = 0, lastAy = 0, lastAz = 0;
-
-function requestMotionPermission() {
-  if (typeof DeviceMotionEvent !== 'undefined' &&
-      typeof DeviceMotionEvent.requestPermission === 'function') {
-    // iOS 13+ 권한 요청 (버튼 탭 이후에만 가능)
-    DeviceMotionEvent.requestPermission().then(state => {
-      if (state === 'granted') listenMotion();
-    }).catch(() => {});
-  } else {
-    listenMotion();
-  }
-}
-
-function listenMotion() {
-  window.addEventListener('devicemotion', (e) => {
-    const acc = e.accelerationIncludingGravity;
-    if (!acc) return;
-    const ax = acc.x || 0;
-    const ay = acc.y || 0;
-    const az = acc.z || 0;
-    const delta = Math.abs(ax - lastAx) + Math.abs(ay - lastAy) + Math.abs(az - lastAz);
-    lastAx = ax; lastAy = ay; lastAz = az;
-
-    const now = Date.now();
-    if (delta > 25 && now - lastShake > 600) {
-      lastShake = now;
-      shakeAll();
-    }
-  });
-}
-
-function shakeAll() {
-  objects.forEach(o => {
-    if (!o.isDragging) {
-      o.vx += (Math.random() - 0.5) * 18;
-      o.vy += (Math.random() - 0.5) * 18 - 6;
-      o.av += (Math.random() - 0.5) * 0.3;
-    }
-  });
-}
-
-// iOS motion 권한은 사용자 제스처 이후에 요청
-document.addEventListener('touchend', () => {
-  requestMotionPermission();
-}, { once: true });
 
 // 게임 루프
 function loop() {
