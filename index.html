@@ -20,52 +20,114 @@
       overflow: hidden;
       touch-action: none;
     }
-    #canvas {
-      display: block;
-      background: #000;
-      cursor: crosshair;
-    }
+    #canvas { display: block; background: #000; cursor: crosshair; }
+
+    /* 하단 버튼 영역 */
     #ui {
       position: fixed;
-      bottom: 20px;
+      bottom: 28px;
       left: 50%;
       transform: translateX(-50%);
       display: flex;
       gap: 12px;
       z-index: 10;
     }
-    #uploadBtn {
-      background: rgba(255,255,255,0.15);
+    .btn {
+      background: rgba(255,255,255,0.12);
       color: #fff;
-      border: 1.5px solid rgba(255,255,255,0.4);
+      border: 1.5px solid rgba(255,255,255,0.35);
       border-radius: 50px;
-      padding: 12px 28px;
+      padding: 13px 26px;
       font-size: 15px;
       cursor: pointer;
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      transition: background 0.2s;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      transition: background 0.15s;
+      white-space: nowrap;
     }
-    #uploadBtn:active { background: rgba(255,255,255,0.3); }
-    #fileInput { display: none; }
+    .btn:active { background: rgba(255,255,255,0.28); }
+
+    /* 카메라 모달 */
+    #cameraModal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: #000;
+      z-index: 100;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    #cameraModal.open { display: flex; }
+    #video {
+      width: 100%;
+      max-height: 75vh;
+      object-fit: cover;
+    }
+    #camControls {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 20px;
+      align-items: center;
+    }
+    #shootBtn {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      border: 4px solid #fff;
+      background: rgba(255,255,255,0.2);
+      cursor: pointer;
+      backdrop-filter: blur(8px);
+    }
+    #shootBtn:active { background: rgba(255,255,255,0.6); }
+    #closeCamBtn {
+      background: rgba(255,255,255,0.12);
+      color: #fff;
+      border: 1.5px solid rgba(255,255,255,0.35);
+      border-radius: 50px;
+      padding: 12px 22px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
     #hint {
       position: fixed;
       top: 30px;
       left: 50%;
       transform: translateX(-50%);
-      color: rgba(255,255,255,0.4);
+      color: rgba(255,255,255,0.38);
       font-size: 13px;
       pointer-events: none;
       white-space: nowrap;
     }
+
+    #fileInput { display: none; }
+    #snapCanvas { display: none; }
   </style>
 </head>
 <body>
+
 <p id="hint">사진을 추가하면 위에서 떨어집니다</p>
 <canvas id="canvas"></canvas>
+
 <div id="ui">
-  <button id="uploadBtn">+ 사진 추가</button>
+  <button class="btn" id="cameraBtn">📷 촬영</button>
+  <button class="btn" id="uploadBtn">🖼 갤러리</button>
   <input type="file" id="fileInput" accept="image/*" multiple>
+</div>
+
+<!-- 카메라 모달 -->
+<div id="cameraModal">
+  <video id="video" autoplay playsinline muted></video>
+  <canvas id="snapCanvas"></canvas>
+  <div id="camControls">
+    <button id="closeCamBtn">✕ 닫기</button>
+    <button id="shootBtn"></button>
+    <button id="switchCamBtn" class="btn" style="padding:12px 18px;">🔄</button>
+  </div>
 </div>
 
 <script>
@@ -73,8 +135,15 @@ const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 const fileInput = document.getElementById('fileInput');
 const uploadBtn = document.getElementById('uploadBtn');
+const cameraBtn = document.getElementById('cameraBtn');
+const cameraModal = document.getElementById('cameraModal');
+const video = document.getElementById('video');
+const shootBtn = document.getElementById('shootBtn');
+const closeCamBtn = document.getElementById('closeCamBtn');
+const switchCamBtn = document.getElementById('switchCamBtn');
+const snapCanvas = document.getElementById('snapCanvas');
 
-// 캔버스 크기 = 화면 크기
+// 캔버스 크기
 function resize() {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
@@ -82,13 +151,12 @@ function resize() {
 resize();
 window.addEventListener('resize', resize);
 
-// 물리 객체 배열
-const objects = [];
-
 // 물리 상수
-const GRAVITY = 0.4;
-const FRICTION = 0.85;
-const BOUNCE = 0.3;
+const GRAVITY = 0.45;
+const FRICTION = 0.82;
+const BOUNCE = 0.32;
+
+const objects = [];
 
 class PhotoObject {
   constructor(img, x, y, w, h) {
@@ -97,26 +165,22 @@ class PhotoObject {
     this.y = y;
     this.w = w;
     this.h = h;
-    this.vx = (Math.random() - 0.5) * 4;
+    this.vx = (Math.random() - 0.5) * 5;
     this.vy = 0;
-    this.rotation = (Math.random() - 0.5) * 0.3;
-    this.angularVelocity = (Math.random() - 0.5) * 0.05;
+    this.rotation = (Math.random() - 0.5) * 0.25;
+    this.angularVelocity = (Math.random() - 0.5) * 0.04;
     this.isDragging = false;
-    this.dragOffsetX = 0;
-    this.dragOffsetY = 0;
     this.lastX = x;
     this.lastY = y;
   }
 
   update() {
     if (this.isDragging) return;
-
     this.vy += GRAVITY;
     this.x += this.vx;
     this.y += this.vy;
     this.rotation += this.angularVelocity;
 
-    // 바닥 충돌
     const floor = canvas.height - this.h / 2;
     if (this.y > floor) {
       this.y = floor;
@@ -125,11 +189,9 @@ class PhotoObject {
       this.angularVelocity *= FRICTION;
       if (Math.abs(this.vy) < 1) this.vy = 0;
     }
-
-    // 좌우 벽 충돌
     const left = this.w / 2;
     const right = canvas.width - this.w / 2;
-    if (this.x < left) { this.x = left; this.vx *= -BOUNCE; }
+    if (this.x < left)  { this.x = left;  this.vx *= -BOUNCE; }
     if (this.x > right) { this.x = right; this.vx *= -BOUNCE; }
   }
 
@@ -141,95 +203,114 @@ class PhotoObject {
     ctx.restore();
   }
 
-  // 터치/마우스가 이 객체 위에 있는지 확인
   hitTest(px, py) {
-    const dx = px - this.x;
-    const dy = py - this.y;
-    return Math.abs(dx) < this.w / 2 && Math.abs(dy) < this.h / 2;
+    return Math.abs(px - this.x) < this.w / 2 && Math.abs(py - this.y) < this.h / 2;
   }
 }
 
-// 이미지 로드 및 객체 생성
-function addPhoto(file) {
-  const reader = new FileReader();
-  reader.onload = (e) => {
-    const img = new Image();
-    img.onload = () => {
-      // 최대 크기 제한
-      const maxW = Math.min(canvas.width * 0.4, 260);
-      const ratio = img.height / img.width;
-      const w = maxW;
-      const h = maxW * ratio;
-
-      // 상단 랜덤 위치에서 시작
-      const x = w / 2 + Math.random() * (canvas.width - w);
-      const y = -h;
-
-      objects.push(new PhotoObject(img, x, y, w, h));
-    };
-    img.src = e.target.result;
-  };
-  reader.readAsDataURL(file);
+function addPhoto(imgEl) {
+  const maxW = Math.min(canvas.width * 0.38, 240);
+  const ratio = imgEl.height / imgEl.width;
+  const w = maxW;
+  const h = maxW * ratio;
+  const x = w / 2 + Math.random() * (canvas.width - w);
+  const y = -h;
+  objects.push(new PhotoObject(imgEl, x, y, w, h));
 }
 
-// 파일 선택
+// 갤러리 업로드
 uploadBtn.addEventListener('click', () => fileInput.click());
 fileInput.addEventListener('change', (e) => {
-  Array.from(e.target.files).forEach(addPhoto);
+  Array.from(e.target.files).forEach(file => {
+    const reader = new FileReader();
+    reader.onload = ev => {
+      const img = new Image();
+      img.onload = () => addPhoto(img);
+      img.src = ev.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
   fileInput.value = '';
 });
 
-// 드래그 처리 (마우스)
+// 카메라
+let stream = null;
+let facingMode = 'environment'; // 후면 카메라 기본
+
+async function startCamera() {
+  try {
+    if (stream) stream.getTracks().forEach(t => t.stop());
+    stream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode, width: { ideal: 1280 }, height: { ideal: 720 } },
+      audio: false
+    });
+    video.srcObject = stream;
+    cameraModal.classList.add('open');
+  } catch (err) {
+    alert('카메라 접근 권한이 필요해요.\n설정 > Safari > 카메라를 허용해주세요.');
+  }
+}
+
+function stopCamera() {
+  if (stream) stream.getTracks().forEach(t => t.stop());
+  stream = null;
+  cameraModal.classList.remove('open');
+}
+
+cameraBtn.addEventListener('click', startCamera);
+closeCamBtn.addEventListener('click', stopCamera);
+
+switchCamBtn.addEventListener('click', () => {
+  facingMode = facingMode === 'environment' ? 'user' : 'environment';
+  startCamera();
+});
+
+// 촬영
+shootBtn.addEventListener('click', () => {
+  snapCanvas.width = video.videoWidth;
+  snapCanvas.height = video.videoHeight;
+  snapCanvas.getContext('2d').drawImage(video, 0, 0);
+  const img = new Image();
+  img.onload = () => addPhoto(img);
+  img.src = snapCanvas.toDataURL('image/jpeg', 0.9);
+  stopCamera();
+});
+
+// 드래그 (마우스)
 let dragTarget = null;
 
 canvas.addEventListener('mousedown', (e) => {
-  const px = e.clientX;
-  const py = e.clientY;
-  // 위에 쌓인 것부터 (역순)
   for (let i = objects.length - 1; i >= 0; i--) {
-    if (objects[i].hitTest(px, py)) {
+    if (objects[i].hitTest(e.clientX, e.clientY)) {
       dragTarget = objects[i];
       dragTarget.isDragging = true;
-      dragTarget.vx = 0;
-      dragTarget.vy = 0;
-      dragTarget.lastX = px;
-      dragTarget.lastY = py;
+      dragTarget.vx = 0; dragTarget.vy = 0;
+      dragTarget.lastX = e.clientX; dragTarget.lastY = e.clientY;
       break;
     }
   }
 });
-
 canvas.addEventListener('mousemove', (e) => {
   if (!dragTarget) return;
   dragTarget.vx = e.clientX - dragTarget.lastX;
   dragTarget.vy = e.clientY - dragTarget.lastY;
-  dragTarget.x = e.clientX;
-  dragTarget.y = e.clientY;
-  dragTarget.lastX = e.clientX;
-  dragTarget.lastY = e.clientY;
+  dragTarget.x = e.clientX; dragTarget.y = e.clientY;
+  dragTarget.lastX = e.clientX; dragTarget.lastY = e.clientY;
 });
-
 canvas.addEventListener('mouseup', () => {
-  if (dragTarget) {
-    dragTarget.isDragging = false;
-    dragTarget = null;
-  }
+  if (dragTarget) { dragTarget.isDragging = false; dragTarget = null; }
 });
 
-// 드래그 처리 (터치)
+// 드래그 (터치)
 canvas.addEventListener('touchstart', (e) => {
   e.preventDefault();
-  const touch = e.touches[0];
-  const px = touch.clientX;
-  const py = touch.clientY;
+  const t = e.touches[0];
   for (let i = objects.length - 1; i >= 0; i--) {
-    if (objects[i].hitTest(px, py)) {
+    if (objects[i].hitTest(t.clientX, t.clientY)) {
       dragTarget = objects[i];
       dragTarget.isDragging = true;
-      dragTarget.vx = 0;
-      dragTarget.vy = 0;
-      dragTarget.lastX = px;
-      dragTarget.lastY = py;
+      dragTarget.vx = 0; dragTarget.vy = 0;
+      dragTarget.lastX = t.clientX; dragTarget.lastY = t.clientY;
       break;
     }
   }
@@ -238,37 +319,26 @@ canvas.addEventListener('touchstart', (e) => {
 canvas.addEventListener('touchmove', (e) => {
   e.preventDefault();
   if (!dragTarget) return;
-  const touch = e.touches[0];
-  dragTarget.vx = touch.clientX - dragTarget.lastX;
-  dragTarget.vy = touch.clientY - dragTarget.lastY;
-  dragTarget.x = touch.clientX;
-  dragTarget.y = touch.clientY;
-  dragTarget.lastX = touch.clientX;
-  dragTarget.lastY = touch.clientY;
+  const t = e.touches[0];
+  dragTarget.vx = t.clientX - dragTarget.lastX;
+  dragTarget.vy = t.clientY - dragTarget.lastY;
+  dragTarget.x = t.clientX; dragTarget.y = t.clientY;
+  dragTarget.lastX = t.clientX; dragTarget.lastY = t.clientY;
 }, { passive: false });
 
 canvas.addEventListener('touchend', () => {
-  if (dragTarget) {
-    dragTarget.isDragging = false;
-    dragTarget = null;
-  }
+  if (dragTarget) { dragTarget.isDragging = false; dragTarget = null; }
 });
 
 // 게임 루프
 function loop() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  objects.forEach(obj => {
-    obj.update();
-    obj.draw();
-  });
+  objects.forEach(o => { o.update(); o.draw(); });
   requestAnimationFrame(loop);
 }
 loop();
 
-// Service Worker 등록
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('sw.js');
-}
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
 </script>
 </body>
 </html>
