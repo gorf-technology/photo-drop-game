@@ -12,7 +12,6 @@
     body {
       background: #000;
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
       min-height: 100vh;
@@ -20,9 +19,7 @@
       overflow: hidden;
       touch-action: none;
     }
-    #canvas { display: block; background: #000; cursor: crosshair; }
-
-    /* 하단 버튼 영역 */
+    #canvas { display: block; background: #000; }
     #ui {
       position: fixed;
       bottom: 28px;
@@ -46,8 +43,6 @@
       white-space: nowrap;
     }
     .btn:active { background: rgba(255,255,255,0.28); }
-
-    /* 카메라 모달 */
     #cameraModal {
       display: none;
       position: fixed;
@@ -59,11 +54,7 @@
       justify-content: center;
     }
     #cameraModal.open { display: flex; }
-    #video {
-      width: 100%;
-      max-height: 75vh;
-      object-fit: cover;
-    }
+    #video { width: 100%; max-height: 75vh; object-fit: cover; }
     #camControls {
       position: fixed;
       bottom: 30px;
@@ -74,13 +65,11 @@
       align-items: center;
     }
     #shootBtn {
-      width: 72px;
-      height: 72px;
+      width: 72px; height: 72px;
       border-radius: 50%;
       border: 4px solid #fff;
       background: rgba(255,255,255,0.2);
       cursor: pointer;
-      backdrop-filter: blur(8px);
     }
     #shootBtn:active { background: rgba(255,255,255,0.6); }
     #closeCamBtn {
@@ -92,34 +81,27 @@
       font-size: 14px;
       cursor: pointer;
     }
-
     #hint {
       position: fixed;
       top: 30px;
       left: 50%;
       transform: translateX(-50%);
-      color: rgba(255,255,255,0.38);
-      font-size: 13px;
+      color: rgba(255,255,255,0.35);
+      font-size: 12px;
       pointer-events: none;
       white-space: nowrap;
     }
-
-    #fileInput { display: none; }
-    #snapCanvas { display: none; }
+    #fileInput, #snapCanvas { display: none; }
   </style>
 </head>
 <body>
-
-<p id="hint">사진을 추가하면 위에서 떨어집니다</p>
+<p id="hint">흔들면 사진이 튀어요</p>
 <canvas id="canvas"></canvas>
-
 <div id="ui">
   <button class="btn" id="cameraBtn">📷 촬영</button>
   <button class="btn" id="uploadBtn">🖼 갤러리</button>
   <input type="file" id="fileInput" accept="image/*" multiple>
 </div>
-
-<!-- 카메라 모달 -->
 <div id="cameraModal">
   <video id="video" autoplay playsinline muted></video>
   <canvas id="snapCanvas"></canvas>
@@ -143,7 +125,7 @@ const closeCamBtn = document.getElementById('closeCamBtn');
 const switchCamBtn = document.getElementById('switchCamBtn');
 const snapCanvas = document.getElementById('snapCanvas');
 
-// 캔버스 크기
+// 캔버스 = 화면 크기
 function resize() {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
@@ -152,9 +134,10 @@ resize();
 window.addEventListener('resize', resize);
 
 // 물리 상수
-const GRAVITY = 0.45;
-const FRICTION = 0.82;
-const BOUNCE = 0.32;
+const GRAVITY = 0.5;
+const FRICTION = 0.78;
+const BOUNCE = 0.25;
+const ANGULAR_DAMP = 0.88;
 
 const objects = [];
 
@@ -165,40 +148,61 @@ class PhotoObject {
     this.y = y;
     this.w = w;
     this.h = h;
-    this.vx = (Math.random() - 0.5) * 5;
+    this.vx = (Math.random() - 0.5) * 3;
     this.vy = 0;
-    this.rotation = (Math.random() - 0.5) * 0.25;
-    this.angularVelocity = (Math.random() - 0.5) * 0.04;
+    this.angle = (Math.random() - 0.5) * 0.3;
+    this.av = (Math.random() - 0.5) * 0.03; // angular velocity
     this.isDragging = false;
     this.lastX = x;
     this.lastY = y;
+    // 반지름 (충돌용 근사)
+    this.r = Math.max(w, h) * 0.45;
   }
 
   update() {
     if (this.isDragging) return;
+
     this.vy += GRAVITY;
     this.x += this.vx;
     this.y += this.vy;
-    this.rotation += this.angularVelocity;
+    this.angle += this.av;
+    this.av *= ANGULAR_DAMP;
 
-    const floor = canvas.height - this.h / 2;
+    // 바닥
+    const floor = canvas.height - this.h * 0.5;
     if (this.y > floor) {
       this.y = floor;
       this.vy *= -BOUNCE;
       this.vx *= FRICTION;
-      this.angularVelocity *= FRICTION;
-      if (Math.abs(this.vy) < 1) this.vy = 0;
+      this.av *= FRICTION;
+      if (Math.abs(this.vy) < 0.8) this.vy = 0;
     }
-    const left = this.w / 2;
-    const right = canvas.width - this.w / 2;
-    if (this.x < left)  { this.x = left;  this.vx *= -BOUNCE; }
-    if (this.x > right) { this.x = right; this.vx *= -BOUNCE; }
+
+    // 왼쪽 벽
+    const leftWall = this.w * 0.5;
+    if (this.x < leftWall) {
+      this.x = leftWall;
+      this.vx = Math.abs(this.vx) * BOUNCE;
+      this.av *= -0.5;
+    }
+
+    // 오른쪽 벽
+    const rightWall = canvas.width - this.w * 0.5;
+    if (this.x > rightWall) {
+      this.x = rightWall;
+      this.vx = -Math.abs(this.vx) * BOUNCE;
+      this.av *= -0.5;
+    }
   }
 
   draw() {
     ctx.save();
     ctx.translate(this.x, this.y);
-    ctx.rotate(this.rotation);
+    ctx.rotate(this.angle);
+    // 살짝 그림자
+    ctx.shadowColor = 'rgba(0,0,0,0.5)';
+    ctx.shadowBlur = 8;
+    ctx.shadowOffsetY = 4;
     ctx.drawImage(this.img, -this.w / 2, -this.h / 2, this.w, this.h);
     ctx.restore();
   }
@@ -208,8 +212,51 @@ class PhotoObject {
   }
 }
 
+// 사진끼리 충돌 처리 (원형 근사)
+function resolveCollisions() {
+  for (let i = 0; i < objects.length; i++) {
+    for (let j = i + 1; j < objects.length; j++) {
+      const a = objects[i];
+      const b = objects[j];
+      if (a.isDragging || b.isDragging) continue;
+
+      const dx = b.x - a.x;
+      const dy = b.y - a.y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      const minDist = (a.r + b.r) * 0.72;
+
+      if (dist < minDist && dist > 0.01) {
+        const nx = dx / dist;
+        const ny = dy / dist;
+        const overlap = minDist - dist;
+
+        // 겹침 분리
+        a.x -= nx * overlap * 0.5;
+        a.y -= ny * overlap * 0.5;
+        b.x += nx * overlap * 0.5;
+        b.y += ny * overlap * 0.5;
+
+        // 속도 교환 (탄성 충돌)
+        const dvx = a.vx - b.vx;
+        const dvy = a.vy - b.vy;
+        const dot = dvx * nx + dvy * ny;
+        if (dot > 0) {
+          const impulse = dot * 0.45;
+          a.vx -= impulse * nx;
+          a.vy -= impulse * ny;
+          b.vx += impulse * nx;
+          b.vy += impulse * ny;
+          // 회전 영향
+          a.av += impulse * 0.04 * (Math.random() - 0.5);
+          b.av -= impulse * 0.04 * (Math.random() - 0.5);
+        }
+      }
+    }
+  }
+}
+
 function addPhoto(imgEl) {
-  const maxW = Math.min(canvas.width * 0.38, 240);
+  const maxW = Math.min(canvas.width * 0.36, 220);
   const ratio = imgEl.height / imgEl.width;
   const w = maxW;
   const h = maxW * ratio;
@@ -218,7 +265,7 @@ function addPhoto(imgEl) {
   objects.push(new PhotoObject(imgEl, x, y, w, h));
 }
 
-// 갤러리 업로드
+// 갤러리
 uploadBtn.addEventListener('click', () => fileInput.click());
 fileInput.addEventListener('change', (e) => {
   Array.from(e.target.files).forEach(file => {
@@ -235,7 +282,7 @@ fileInput.addEventListener('change', (e) => {
 
 // 카메라
 let stream = null;
-let facingMode = 'environment'; // 후면 카메라 기본
+let facingMode = 'environment';
 
 async function startCamera() {
   try {
@@ -246,8 +293,8 @@ async function startCamera() {
     });
     video.srcObject = stream;
     cameraModal.classList.add('open');
-  } catch (err) {
-    alert('카메라 접근 권한이 필요해요.\n설정 > Safari > 카메라를 허용해주세요.');
+  } catch {
+    alert('카메라 권한이 필요해요.\n설정 > Safari > 카메라를 허용해주세요.');
   }
 }
 
@@ -259,13 +306,10 @@ function stopCamera() {
 
 cameraBtn.addEventListener('click', startCamera);
 closeCamBtn.addEventListener('click', stopCamera);
-
 switchCamBtn.addEventListener('click', () => {
   facingMode = facingMode === 'environment' ? 'user' : 'environment';
   startCamera();
 });
-
-// 촬영
 shootBtn.addEventListener('click', () => {
   snapCanvas.width = video.videoWidth;
   snapCanvas.height = video.videoHeight;
@@ -294,8 +338,10 @@ canvas.addEventListener('mousemove', (e) => {
   if (!dragTarget) return;
   dragTarget.vx = e.clientX - dragTarget.lastX;
   dragTarget.vy = e.clientY - dragTarget.lastY;
-  dragTarget.x = e.clientX; dragTarget.y = e.clientY;
-  dragTarget.lastX = e.clientX; dragTarget.lastY = e.clientY;
+  dragTarget.x = e.clientX;
+  dragTarget.y = e.clientY;
+  dragTarget.lastX = e.clientX;
+  dragTarget.lastY = e.clientY;
 });
 canvas.addEventListener('mouseup', () => {
   if (dragTarget) { dragTarget.isDragging = false; dragTarget = null; }
@@ -322,17 +368,69 @@ canvas.addEventListener('touchmove', (e) => {
   const t = e.touches[0];
   dragTarget.vx = t.clientX - dragTarget.lastX;
   dragTarget.vy = t.clientY - dragTarget.lastY;
-  dragTarget.x = t.clientX; dragTarget.y = t.clientY;
-  dragTarget.lastX = t.clientX; dragTarget.lastY = t.clientY;
+  dragTarget.x = t.clientX;
+  dragTarget.y = t.clientY;
+  dragTarget.lastX = t.clientX;
+  dragTarget.lastY = t.clientY;
 }, { passive: false });
 
 canvas.addEventListener('touchend', () => {
   if (dragTarget) { dragTarget.isDragging = false; dragTarget = null; }
 });
 
+// 흔들기 감지 (DeviceMotion)
+let lastShake = 0;
+let lastAx = 0, lastAy = 0, lastAz = 0;
+
+function requestMotionPermission() {
+  if (typeof DeviceMotionEvent !== 'undefined' &&
+      typeof DeviceMotionEvent.requestPermission === 'function') {
+    // iOS 13+ 권한 요청 (버튼 탭 이후에만 가능)
+    DeviceMotionEvent.requestPermission().then(state => {
+      if (state === 'granted') listenMotion();
+    }).catch(() => {});
+  } else {
+    listenMotion();
+  }
+}
+
+function listenMotion() {
+  window.addEventListener('devicemotion', (e) => {
+    const acc = e.accelerationIncludingGravity;
+    if (!acc) return;
+    const ax = acc.x || 0;
+    const ay = acc.y || 0;
+    const az = acc.z || 0;
+    const delta = Math.abs(ax - lastAx) + Math.abs(ay - lastAy) + Math.abs(az - lastAz);
+    lastAx = ax; lastAy = ay; lastAz = az;
+
+    const now = Date.now();
+    if (delta > 25 && now - lastShake > 600) {
+      lastShake = now;
+      shakeAll();
+    }
+  });
+}
+
+function shakeAll() {
+  objects.forEach(o => {
+    if (!o.isDragging) {
+      o.vx += (Math.random() - 0.5) * 18;
+      o.vy += (Math.random() - 0.5) * 18 - 6;
+      o.av += (Math.random() - 0.5) * 0.3;
+    }
+  });
+}
+
+// iOS motion 권한은 사용자 제스처 이후에 요청
+document.addEventListener('touchend', () => {
+  requestMotionPermission();
+}, { once: true });
+
 // 게임 루프
 function loop() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+  resolveCollisions();
   objects.forEach(o => { o.update(); o.draw(); });
   requestAnimationFrame(loop);
 }
