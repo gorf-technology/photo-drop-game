@@ -12,74 +12,109 @@
     body {
       background: #000;
       min-height: 100vh;
-      font-family: sans-serif;
+      font-family: -apple-system, sans-serif;
       overflow: hidden;
       touch-action: none;
     }
     #canvas { display: block; background: #000; }
-    #ui {
+
+    /* 상단 보조 버튼 */
+    #topUI {
       position: fixed;
-      bottom: 28px;
-      left: 50%;
-      transform: translateX(-50%);
+      top: 20px;
+      right: 16px;
       display: flex;
-      gap: 10px;
+      gap: 8px;
       z-index: 10;
       align-items: center;
     }
-    .btn {
-      background: rgba(255,255,255,0.12);
-      color: #fff;
-      border: 1.5px solid rgba(255,255,255,0.35);
+    .btnSm {
+      background: rgba(255,255,255,0.1);
+      color: rgba(255,255,255,0.7);
+      border: 1px solid rgba(255,255,255,0.2);
       border-radius: 50px;
-      padding: 12px 22px;
-      font-size: 14px;
+      padding: 8px 14px;
+      font-size: 12px;
       cursor: pointer;
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
       white-space: nowrap;
       transition: background 0.12s;
     }
-    .btn:active { background: rgba(255,255,255,0.3); }
-    .btn:disabled { opacity: 0.35; pointer-events: none; }
-    #shakeBtn {
-      background: rgba(255,100,50,0.18);
-      border-color: rgba(255,120,60,0.5);
-      color: #ff9966;
-    }
-    #shakeBtn:active { background: rgba(255,100,50,0.45); }
-    #resetBtn {
-      background: rgba(255,50,50,0.15);
-      border-color: rgba(255,80,80,0.45);
-      color: #ff8080;
-      font-size: 13px;
-      padding: 12px 16px;
-    }
-    #resetBtn:active { background: rgba(255,50,50,0.4); }
+    .btnSm:active { background: rgba(255,255,255,0.25); }
 
-    /* 처리 큐 상태 표시 */
+    /* 하단 메인 버튼 */
+    #bottomUI {
+      position: fixed;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 16px;
+      z-index: 10;
+      align-items: center;
+    }
+    .btnMain {
+      background: rgba(255,255,255,0.13);
+      color: #fff;
+      border: 1.5px solid rgba(255,255,255,0.3);
+      border-radius: 60px;
+      padding: 16px 32px;
+      font-size: 15px;
+      font-weight: 500;
+      cursor: pointer;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      white-space: nowrap;
+      transition: background 0.12s, transform 0.08s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .btnMain:active { background: rgba(255,255,255,0.28); transform: scale(0.96); }
+    .btnMain:disabled { opacity: 0.3; pointer-events: none; }
+
+    /* 모델 로딩 */
+    #modelStatus {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.65);
+      color: rgba(255,255,255,0.65);
+      border-radius: 50px;
+      padding: 8px 18px;
+      font-size: 12px;
+      z-index: 300;
+      backdrop-filter: blur(8px);
+      transition: opacity 0.6s;
+      white-space: nowrap;
+    }
+
+    /* 큐 배지 */
     #queueBadge {
       display: none;
       position: fixed;
       top: 20px;
-      right: 16px;
-      background: rgba(255,255,255,0.15);
-      color: #fff;
+      left: 16px;
+      background: rgba(255,255,255,0.12);
+      color: rgba(255,255,255,0.6);
       border-radius: 50px;
-      padding: 6px 14px;
-      font-size: 12px;
+      padding: 7px 13px;
+      font-size: 11px;
       z-index: 300;
       backdrop-filter: blur(8px);
     }
     #queueBadge.show { display: block; }
 
+    /* 토스트 */
     #toast {
       display: none;
       position: fixed;
-      top: 40px;
+      bottom: 110px;
       left: 50%;
       transform: translateX(-50%);
-      background: rgba(220,60,60,0.9);
+      background: rgba(30,30,30,0.9);
       color: #fff;
       border-radius: 50px;
       padding: 12px 24px;
@@ -90,22 +125,27 @@
     }
     #toast.show { display: block; }
 
-    /* 모델 로딩 상태 */
-    #modelStatus {
+    /* 얼굴 카운터 */
+    #faceCounter {
       position: fixed;
-      top: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(0,0,0,0.7);
-      color: rgba(255,255,255,0.7);
-      border-radius: 50px;
-      padding: 8px 18px;
-      font-size: 12px;
-      z-index: 300;
-      backdrop-filter: blur(8px);
-      transition: opacity 0.5s;
+      bottom: 8px;
+      left: 12px;
+      color: rgba(255,255,255,0.2);
+      font-size: 10px;
+      pointer-events: none;
+      z-index: 5;
+    }
+    #version {
+      position: fixed;
+      bottom: 8px;
+      right: 12px;
+      color: rgba(255,255,255,0.2);
+      font-size: 10px;
+      pointer-events: none;
+      z-index: 5;
     }
 
+    /* 안내 화면 */
     #guide {
       position: fixed;
       inset: 0;
@@ -119,14 +159,15 @@
       color: #fff;
       padding: 40px;
     }
-    #guide h1 { font-size: 22px; font-weight: 600; text-align: center; }
+    #guide h1 { font-size: 24px; font-weight: 700; text-align: center; letter-spacing: -0.5px; }
     #guide .tips {
-      background: rgba(255,255,255,0.08);
-      border-radius: 16px;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 20px;
       padding: 20px 24px;
       font-size: 13px;
-      color: rgba(255,255,255,0.7);
-      line-height: 2;
+      color: rgba(255,255,255,0.6);
+      line-height: 2.2;
       width: 100%;
       max-width: 320px;
     }
@@ -134,15 +175,48 @@
       background: #fff;
       color: #000;
       border: none;
-      border-radius: 50px;
-      padding: 16px 40px;
+      border-radius: 60px;
+      padding: 16px 48px;
       font-size: 16px;
       font-weight: 600;
       cursor: pointer;
-      margin-top: 8px;
     }
     #startBtn:active { opacity: 0.8; }
 
+    /* 확인 모달 */
+    #confirmModal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      z-index: 400;
+      align-items: center;
+      justify-content: center;
+    }
+    #confirmModal.show { display: flex; }
+    #confirmBox {
+      background: #1a1a1a;
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 20px;
+      padding: 28px 32px;
+      text-align: center;
+      color: #fff;
+      max-width: 280px;
+      width: 90%;
+    }
+    #confirmBox p { font-size: 15px; margin-bottom: 20px; color: rgba(255,255,255,0.8); }
+    #confirmBox .confirmBtns { display: flex; gap: 10px; justify-content: center; }
+    #confirmBox button {
+      border-radius: 50px;
+      padding: 11px 24px;
+      font-size: 14px;
+      cursor: pointer;
+      border: none;
+    }
+    #confirmYes { background: #ff4444; color: #fff; }
+    #confirmNo { background: rgba(255,255,255,0.12); color: #fff; }
+
+    /* 카메라 모달 */
     #cameraModal {
       display: none;
       position: fixed;
@@ -154,7 +228,12 @@
       justify-content: center;
     }
     #cameraModal.open { display: flex; }
-    #video { width: 100%; max-height: 75vh; object-fit: cover; }
+    #video {
+      width: 100%;
+      max-height: 75vh;
+      object-fit: cover;
+    }
+    #video.mirrored { transform: scaleX(-1); }
     #camControls {
       position: fixed;
       bottom: 30px;
@@ -175,32 +254,13 @@
     #closeCamBtn {
       background: rgba(255,255,255,0.12);
       color: #fff;
-      border: 1.5px solid rgba(255,255,255,0.35);
+      border: 1.5px solid rgba(255,255,255,0.3);
       border-radius: 50px;
-      padding: 12px 22px;
+      padding: 12px 20px;
       font-size: 14px;
       cursor: pointer;
     }
     #fileInput, #snapCanvas { display: none; }
-    #version {
-      position: fixed;
-      bottom: 8px;
-      right: 12px;
-      color: rgba(255,255,255,0.2);
-      font-size: 10px;
-      pointer-events: none;
-      z-index: 5;
-    }
-    /* 얼굴 카운터 */
-    #faceCounter {
-      position: fixed;
-      top: 20px;
-      left: 16px;
-      color: rgba(255,255,255,0.25);
-      font-size: 12px;
-      pointer-events: none;
-      z-index: 5;
-    }
   </style>
 </head>
 <body>
@@ -210,25 +270,41 @@
   <div class="tips">
     ✅ 얼굴이 잘 보이는 사진<br>
     ✅ 정면 또는 약간 옆 각도<br>
-    ✅ 단체사진도 OK — 각각 따로 떨어져요<br>
+    ✅ 단체사진도 OK<br>
     ✅ 밝은 조명
   </div>
   <button id="startBtn">시작하기</button>
 </div>
 
 <canvas id="canvas"></canvas>
-<div id="version">v0.6</div>
+<div id="version">v0.7</div>
 <div id="faceCounter">얼굴 0개</div>
 <div id="modelStatus">⏳ 모델 로딩 중...</div>
 <div id="queueBadge"></div>
 <div id="toast"></div>
 
-<div id="ui">
-  <button class="btn" id="cameraBtn" disabled>📷</button>
-  <button class="btn" id="uploadBtn" disabled>🖼</button>
-  <button class="btn" id="shakeBtn">🫨</button>
-  <button class="btn" id="resetBtn">🗑 초기화</button>
+<!-- 상단 보조 버튼 -->
+<div id="topUI">
+  <button class="btnSm" id="shakeBtn">🫨 흔들기</button>
+  <button class="btnSm" id="resetBtn">🗑 초기화</button>
+</div>
+
+<!-- 하단 메인 버튼 -->
+<div id="bottomUI">
+  <button class="btnMain" id="cameraBtn" disabled>📷 <span>촬영</span></button>
+  <button class="btnMain" id="uploadBtn" disabled>🖼 <span>갤러리</span></button>
   <input type="file" id="fileInput" accept="image/*" multiple>
+</div>
+
+<!-- 초기화 확인 모달 -->
+<div id="confirmModal">
+  <div id="confirmBox">
+    <p>얼굴을 모두 지울까요?</p>
+    <div class="confirmBtns">
+      <button id="confirmNo">취소</button>
+      <button id="confirmYes">지우기</button>
+    </div>
+  </div>
 </div>
 
 <div id="cameraModal">
@@ -237,7 +313,7 @@
   <div id="camControls">
     <button id="closeCamBtn">✕ 닫기</button>
     <button id="shootBtn"></button>
-    <button id="switchCamBtn" class="btn" style="padding:12px 18px;">🔄</button>
+    <button id="switchCamBtn" class="btnSm">🔄</button>
   </div>
 </div>
 
@@ -263,6 +339,9 @@ const startBtn = document.getElementById('startBtn');
 const modelStatus = document.getElementById('modelStatus');
 const queueBadge = document.getElementById('queueBadge');
 const faceCounter = document.getElementById('faceCounter');
+const confirmModal = document.getElementById('confirmModal');
+const confirmYes = document.getElementById('confirmYes');
+const confirmNo = document.getElementById('confirmNo');
 
 startBtn.addEventListener('click', () => { guide.style.display = 'none'; });
 
@@ -274,12 +353,12 @@ resize();
 window.addEventListener('resize', resize);
 
 let toastTimer = null;
-function showToast(msg, color = 'rgba(220,60,60,0.9)') {
+function showToast(msg, color = 'rgba(30,30,30,0.9)') {
   toastEl.textContent = msg;
   toastEl.style.background = color;
   toastEl.classList.add('show');
   if (toastTimer) clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => toastEl.classList.remove('show'), 2800);
+  toastTimer = setTimeout(() => toastEl.classList.remove('show'), 2500);
 }
 
 // 모델 로딩
@@ -296,27 +375,23 @@ async function loadModels() {
     modelsLoaded = true;
     modelStatus.textContent = '✅ 준비됐어요';
     setTimeout(() => { modelStatus.style.opacity = '0'; }, 1500);
-    // 버튼 활성화
     uploadBtn.disabled = false;
     cameraBtn.disabled = false;
     return true;
   } catch(e) {
-    modelStatus.textContent = '❌ 모델 로딩 실패';
+    modelStatus.textContent = '❌ 모델 로딩 실패 — 새로고침해주세요';
     return false;
   }
 }
 
-// 처리 큐 — 사진 여러 장 동시에 추가해도 순차 처리
+// 처리 큐
 const queue = [];
 let isProcessing = false;
 
 function updateQueueBadge() {
-  if (queue.length === 0) {
-    queueBadge.classList.remove('show');
-  } else {
-    queueBadge.textContent = `처리 중 ${queue.length}장 남음`;
-    queueBadge.classList.add('show');
-  }
+  if (queue.length === 0) { queueBadge.classList.remove('show'); return; }
+  queueBadge.textContent = `⏳ ${queue.length}장 처리 중`;
+  queueBadge.classList.add('show');
 }
 
 async function enqueue(imgEl) {
@@ -339,14 +414,26 @@ async function detectAndCropFaces(imgEl) {
   const iw = imgEl.naturalWidth || imgEl.width;
   const ih = imgEl.naturalHeight || imgEl.height;
 
-  // 단체사진 대응: inputSize 크게, scoreThreshold 낮게
+  // 속도 개선: 큰 이미지 리사이즈 후 감지
+  let detectTarget = imgEl;
+  const maxDetectSize = 800;
+  let scaleRatio = 1;
+  if (iw > maxDetectSize || ih > maxDetectSize) {
+    scaleRatio = maxDetectSize / Math.max(iw, ih);
+    const resizeCanvas = document.createElement('canvas');
+    resizeCanvas.width = Math.round(iw * scaleRatio);
+    resizeCanvas.height = Math.round(ih * scaleRatio);
+    resizeCanvas.getContext('2d').drawImage(imgEl, 0, 0, resizeCanvas.width, resizeCanvas.height);
+    detectTarget = resizeCanvas;
+  }
+
   const options = new faceapi.TinyFaceDetectorOptions({
-    inputSize: 416,        // 기본 224보다 크게 — 작은 얼굴도 감지
-    scoreThreshold: 0.3    // 기본 0.5보다 낮게 — 더 많이 감지
+    inputSize: 416,
+    scoreThreshold: 0.3
   });
 
   const detections = await faceapi
-    .detectAllFaces(imgEl, options)
+    .detectAllFaces(detectTarget, options)
     .withFaceLandmarks(true);
 
   if (!detections || detections.length === 0) return [];
@@ -354,53 +441,55 @@ async function detectAndCropFaces(imgEl) {
   const results = [];
 
   detections.forEach(det => {
-    const box = det.detection.box;
+    // 리사이즈된 좌표 → 원본 좌표로 역변환
     const landmarks = det.landmarks;
+    const allPoints = landmarks.positions.map(p => ({
+      x: p.x / scaleRatio,
+      y: p.y / scaleRatio
+    }));
 
-    // 사진 내 얼굴 비율 → 화면 크기 매핑
-    const faceRatio = box.height / ih;
-    const minScreenRatio = 0.08;
-    const maxScreenRatio = 0.35;
+    const box = det.detection.box;
+    const boxH = box.height / scaleRatio;
+
+    // 얼굴 비율 → 화면 크기 매핑 (전체적으로 70% 수준으로 축소)
+    const faceRatio = boxH / ih;
+    const minScreenRatio = 0.055;  // 기존 0.08 → 0.055
+    const maxScreenRatio = 0.24;   // 기존 0.35 → 0.24
     const clampedRatio = Math.max(0.05, Math.min(0.8, faceRatio));
     const t = (clampedRatio - 0.05) / (0.8 - 0.05);
     const screenRatio = minScreenRatio + t * (maxScreenRatio - minScreenRatio);
     const targetH_px = canvas.height * screenRatio;
 
-    // 랜드마크로 윤곽 폴리곤
-    const jawPoints = landmarks.getJawOutline();
-    const leftBrow = landmarks.getLeftEyeBrow();
-    const rightBrow = landmarks.getRightEyeBrow();
+    // 랜드마크 인덱스 (face-api 68점 기준)
+    const jaw = allPoints.slice(0, 17);          // 턱선
+    const leftBrow = allPoints.slice(17, 22);    // 왼쪽 눈썹
+    const rightBrow = allPoints.slice(22, 27);   // 오른쪽 눈썹
 
     const browTopY = Math.min(...leftBrow.map(p => p.y), ...rightBrow.map(p => p.y));
-    const chinY = Math.max(...jawPoints.map(p => p.y));
+    const chinY = Math.max(...jaw.map(p => p.y));
     const foreheadOffset = (chinY - browTopY) * 0.45;
     const foreheadY = browTopY - foreheadOffset;
-    const leftBrowX = jawPoints[0].x;
-    const rightBrowX = jawPoints[16].x;
 
     const contour = [
-      { x: jawPoints[0].x, y: jawPoints[0].y },
-      { x: leftBrowX, y: foreheadY },
-      { x: (leftBrowX + rightBrowX) / 2, y: foreheadY },
-      { x: rightBrowX, y: foreheadY },
-      { x: jawPoints[16].x, y: jawPoints[16].y },
-      ...jawPoints.slice(1, 16).reverse().map(p => ({ x: p.x, y: p.y }))
+      { x: jaw[0].x, y: jaw[0].y },
+      { x: jaw[0].x, y: foreheadY },
+      { x: (jaw[0].x + jaw[16].x) / 2, y: foreheadY },
+      { x: jaw[16].x, y: foreheadY },
+      { x: jaw[16].x, y: jaw[16].y },
+      ...jaw.slice(1, 16).reverse()
     ];
 
     let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
     contour.forEach(p => {
-      minX = Math.min(minX, p.x);
-      minY = Math.min(minY, p.y);
-      maxX = Math.max(maxX, p.x);
-      maxY = Math.max(maxY, p.y);
+      minX = Math.min(minX, p.x); minY = Math.min(minY, p.y);
+      maxX = Math.max(maxX, p.x); maxY = Math.max(maxY, p.y);
     });
 
-    const padX = (maxX - minX) * 0.06;
-    const padY = (maxY - minY) * 0.06;
-    minX = Math.max(0, minX - padX);
-    minY = Math.max(0, minY - padY);
-    maxX = Math.min(iw, maxX + padX);
-    maxY = Math.min(ih, maxY + padY);
+    const pad = 0.05;
+    const padX = (maxX - minX) * pad;
+    const padY = (maxY - minY) * pad;
+    minX = Math.max(0, minX - padX); minY = Math.max(0, minY - padY);
+    maxX = Math.min(iw, maxX + padX); maxY = Math.min(ih, maxY + padY);
 
     const cropW = maxX - minX;
     const cropH = maxY - minY;
@@ -421,19 +510,16 @@ async function detectAndCropFaces(imgEl) {
     fctx.drawImage(imgEl, minX, minY, cropW, cropH, 0, 0, fc.width, fc.height);
     fctx.restore();
 
-    // 경계 페이드 (경량화: 전체 픽셀 대신 외곽 띠만)
+    // 경계 페이드 (경량화)
     const imgData = fctx.getImageData(0, 0, fc.width, fc.height);
     const d = imgData.data;
-    const fadeW = 5;
+    const fadeW = 4;
     for (let py = 0; py < fc.height; py++) {
       for (let px = 0; px < fc.width; px++) {
         const idx = (py * fc.width + px) * 4;
         if (d[idx + 3] === 0) continue;
-        // 캔버스 외곽 띠만 처리
         const edgeDist = Math.min(px, py, fc.width - 1 - px, fc.height - 1 - py);
-        if (edgeDist < fadeW) {
-          d[idx + 3] = Math.round(d[idx + 3] * (edgeDist / fadeW));
-        }
+        if (edgeDist < fadeW) d[idx + 3] = Math.round(d[idx + 3] * edgeDist / fadeW);
       }
     }
     fctx.putImageData(imgData, 0, 0);
@@ -444,14 +530,13 @@ async function detectAndCropFaces(imgEl) {
   });
 
   await Promise.all(results.map(r => new Promise(res => {
-    if (r.img.complete) res();
-    else r.img.onload = res;
+    if (r.img.complete) res(); else r.img.onload = res;
   })));
 
   return results;
 }
 
-// 물리 상수
+// 물리
 const GRAVITY = 0.52;
 const FLOOR_FRICTION = 0.72;
 const BOUNCE = 0.28;
@@ -490,10 +575,8 @@ class FaceObject {
 
     const floor = canvas.height - this.ry;
     if (this.y >= floor) {
-      this.y = floor;
-      this.vy *= -BOUNCE;
-      this.vx *= FLOOR_FRICTION;
-      this.av *= FLOOR_FRICTION;
+      this.y = floor; this.vy *= -BOUNCE;
+      this.vx *= FLOOR_FRICTION; this.av *= FLOOR_FRICTION;
       if (Math.abs(this.vy) < 1.0) this.vy = 0;
     }
     if (this.x - this.rx <= 0) { this.x = this.rx; this.vx = Math.abs(this.vx) * BOUNCE; this.av *= -0.4; }
@@ -505,8 +588,8 @@ class FaceObject {
     ctx.translate(this.x, this.y);
     ctx.rotate(this.angle);
     ctx.shadowColor = 'rgba(0,0,0,0.7)';
-    ctx.shadowBlur = 16;
-    ctx.shadowOffsetY = 7;
+    ctx.shadowBlur = 14;
+    ctx.shadowOffsetY = 6;
     ctx.drawImage(this.img, -this.w / 2, -this.h / 2, this.w, this.h);
     ctx.restore();
   }
@@ -532,12 +615,11 @@ function resolveCollisions() {
         const overlap = (minDist - dist) * 0.5;
         if (!a.isDragging) { a.x -= nx*overlap; a.y -= ny*overlap; }
         if (!b.isDragging) { b.x += nx*overlap; b.y += ny*overlap; }
-        const relVx = a.vx-b.vx, relVy = a.vy-b.vy;
-        const dot = relVx*nx + relVy*ny;
+        const dot = (a.vx-b.vx)*nx + (a.vy-b.vy)*ny;
         if (dot <= 0) continue;
-        const impulse = dot * 0.6;
-        if (!a.isDragging) { a.vx -= impulse*nx; a.vy -= impulse*ny; a.av += impulse*0.025*(Math.random()-0.5); }
-        if (!b.isDragging) { b.vx += impulse*nx; b.vy += impulse*ny; b.av -= impulse*0.025*(Math.random()-0.5); }
+        const imp = dot * 0.6;
+        if (!a.isDragging) { a.vx -= imp*nx; a.vy -= imp*ny; a.av += imp*0.025*(Math.random()-0.5); }
+        if (!b.isDragging) { b.vx += imp*nx; b.vy += imp*ny; b.av -= imp*0.025*(Math.random()-0.5); }
       }
     }
   }
@@ -545,26 +627,19 @@ function resolveCollisions() {
 
 async function processImage(imgEl) {
   const faces = await detectAndCropFaces(imgEl);
-
   if (faces.length === 0) {
-    showToast('😅 얼굴을 찾지 못했어요. 더 선명한 사진을 써주세요.');
+    showToast('😅 얼굴을 찾지 못했어요');
     return;
   }
-
   faces.forEach(face => {
     const scale = face.targetH / face.cropH;
     const fw = face.cropW * scale;
     const fh = face.targetH;
     const x = fw / 2 + Math.random() * (canvas.width - fw);
-    const y = -fh;
-    objects.push(new FaceObject(face.img, x, y, fw, fh));
+    objects.push(new FaceObject(face.img, x, -fh, fw, fh));
   });
-
   updateFaceCounter();
-
-  if (faces.length > 1) {
-    showToast(`😊 얼굴 ${faces.length}개 발견!`, 'rgba(40,160,80,0.9)');
-  }
+  if (faces.length > 1) showToast(`😊 얼굴 ${faces.length}개 발견!`, 'rgba(40,140,70,0.9)');
 }
 
 // 갤러리
@@ -594,6 +669,8 @@ async function startCamera() {
       audio: false
     });
     video.srcObject = stream;
+    // 전면 카메라일 때 좌우반전
+    video.classList.toggle('mirrored', facingMode === 'user');
     cameraModal.classList.add('open');
   } catch {
     alert('카메라 권한이 필요해요.\n설정 > Safari > 카메라를 허용해주세요.');
@@ -612,10 +689,21 @@ switchCamBtn.addEventListener('click', () => {
   facingMode = facingMode === 'environment' ? 'user' : 'environment';
   startCamera();
 });
+
 shootBtn.addEventListener('click', () => {
-  snapCanvas.width = video.videoWidth;
-  snapCanvas.height = video.videoHeight;
-  snapCanvas.getContext('2d').drawImage(video, 0, 0);
+  const vw = video.videoWidth;
+  const vh = video.videoHeight;
+  snapCanvas.width = vw;
+  snapCanvas.height = vh;
+  const sctx = snapCanvas.getContext('2d');
+
+  // 전면 카메라면 캔버스에서도 좌우반전
+  if (facingMode === 'user') {
+    sctx.translate(vw, 0);
+    sctx.scale(-1, 1);
+  }
+  sctx.drawImage(video, 0, 0);
+
   const img = new Image();
   img.onload = () => enqueue(img);
   img.src = snapCanvas.toDataURL('image/jpeg', 0.92);
@@ -633,11 +721,14 @@ shakeBtn.addEventListener('click', () => {
   });
 });
 
-// 초기화
-resetBtn.addEventListener('click', () => {
+// 초기화 (확인 모달)
+resetBtn.addEventListener('click', () => confirmModal.classList.add('show'));
+confirmNo.addEventListener('click', () => confirmModal.classList.remove('show'));
+confirmYes.addEventListener('click', () => {
   objects.length = 0;
   updateFaceCounter();
-  showToast('🗑 초기화됐어요', 'rgba(80,80,80,0.9)');
+  confirmModal.classList.remove('show');
+  showToast('🗑 초기화됐어요');
 });
 
 // 드래그 (마우스)
@@ -702,9 +793,7 @@ function loop() {
 }
 loop();
 
-// 모델 미리 로드
 loadModels();
-
 if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
 </script>
 </body>
