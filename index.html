@@ -17,8 +17,6 @@
       touch-action: none;
     }
     #canvas { display: block; background: #000; }
-
-    /* 상단 보조 버튼 */
     #topUI {
       position: fixed;
       top: 20px;
@@ -42,8 +40,6 @@
       transition: background 0.12s;
     }
     .btnSm:active { background: rgba(255,255,255,0.25); }
-
-    /* 하단 메인 버튼 */
     #bottomUI {
       position: fixed;
       bottom: 32px;
@@ -73,8 +69,6 @@
     }
     .btnMain:active { background: rgba(255,255,255,0.28); transform: scale(0.96); }
     .btnMain:disabled { opacity: 0.3; pointer-events: none; }
-
-    /* 모델 로딩 */
     #modelStatus {
       position: fixed;
       top: 20px;
@@ -90,8 +84,6 @@
       transition: opacity 0.6s;
       white-space: nowrap;
     }
-
-    /* 큐 배지 */
     #queueBadge {
       display: none;
       position: fixed;
@@ -106,8 +98,6 @@
       backdrop-filter: blur(8px);
     }
     #queueBadge.show { display: block; }
-
-    /* 토스트 */
     #toast {
       display: none;
       position: fixed;
@@ -124,8 +114,6 @@
       backdrop-filter: blur(8px);
     }
     #toast.show { display: block; }
-
-    /* 얼굴 카운터 */
     #faceCounter {
       position: fixed;
       bottom: 8px;
@@ -144,8 +132,6 @@
       pointer-events: none;
       z-index: 5;
     }
-
-    /* 안내 화면 */
     #guide {
       position: fixed;
       inset: 0;
@@ -159,7 +145,7 @@
       color: #fff;
       padding: 40px;
     }
-    #guide h1 { font-size: 24px; font-weight: 700; text-align: center; letter-spacing: -0.5px; }
+    #guide h1 { font-size: 24px; font-weight: 700; text-align: center; }
     #guide .tips {
       background: rgba(255,255,255,0.07);
       border: 1px solid rgba(255,255,255,0.1);
@@ -182,8 +168,6 @@
       cursor: pointer;
     }
     #startBtn:active { opacity: 0.8; }
-
-    /* 확인 모달 */
     #confirmModal {
       display: none;
       position: fixed;
@@ -206,17 +190,9 @@
     }
     #confirmBox p { font-size: 15px; margin-bottom: 20px; color: rgba(255,255,255,0.8); }
     #confirmBox .confirmBtns { display: flex; gap: 10px; justify-content: center; }
-    #confirmBox button {
-      border-radius: 50px;
-      padding: 11px 24px;
-      font-size: 14px;
-      cursor: pointer;
-      border: none;
-    }
+    #confirmBox button { border-radius: 50px; padding: 11px 24px; font-size: 14px; cursor: pointer; border: none; }
     #confirmYes { background: #ff4444; color: #fff; }
     #confirmNo { background: rgba(255,255,255,0.12); color: #fff; }
-
-    /* 카메라 모달 */
     #cameraModal {
       display: none;
       position: fixed;
@@ -228,11 +204,7 @@
       justify-content: center;
     }
     #cameraModal.open { display: flex; }
-    #video {
-      width: 100%;
-      max-height: 75vh;
-      object-fit: cover;
-    }
+    #video { width: 100%; max-height: 75vh; object-fit: cover; }
     #video.mirrored { transform: scaleX(-1); }
     #camControls {
       position: fixed;
@@ -277,26 +249,23 @@
 </div>
 
 <canvas id="canvas"></canvas>
-<div id="version">v0.7</div>
+<div id="version">v0.8</div>
 <div id="faceCounter">얼굴 0개</div>
 <div id="modelStatus">⏳ 모델 로딩 중...</div>
 <div id="queueBadge"></div>
 <div id="toast"></div>
 
-<!-- 상단 보조 버튼 -->
 <div id="topUI">
   <button class="btnSm" id="shakeBtn">🫨 흔들기</button>
   <button class="btnSm" id="resetBtn">🗑 초기화</button>
 </div>
 
-<!-- 하단 메인 버튼 -->
 <div id="bottomUI">
   <button class="btnMain" id="cameraBtn" disabled>📷 <span>촬영</span></button>
   <button class="btnMain" id="uploadBtn" disabled>🖼 <span>갤러리</span></button>
   <input type="file" id="fileInput" accept="image/*" multiple>
 </div>
 
-<!-- 초기화 확인 모달 -->
 <div id="confirmModal">
   <div id="confirmBox">
     <p>얼굴을 모두 지울까요?</p>
@@ -384,7 +353,7 @@ async function loadModels() {
   }
 }
 
-// 처리 큐
+// 큐
 const queue = [];
 let isProcessing = false;
 
@@ -409,22 +378,44 @@ async function processQueue() {
   processQueue();
 }
 
-// 얼굴 감지 + 크롭
+// 베지어 곡선으로 부드러운 윤곽선 그리기
+function drawSmoothContour(ctx, points) {
+  if (points.length < 3) return;
+  ctx.beginPath();
+  ctx.moveTo(
+    (points[0].x + points[1].x) / 2,
+    (points[0].y + points[1].y) / 2
+  );
+  for (let i = 1; i < points.length - 1; i++) {
+    const mx = (points[i].x + points[i + 1].x) / 2;
+    const my = (points[i].y + points[i + 1].y) / 2;
+    ctx.quadraticCurveTo(points[i].x, points[i].y, mx, my);
+  }
+  // 마지막 점 → 첫 점으로 닫기
+  ctx.quadraticCurveTo(
+    points[points.length - 1].x,
+    points[points.length - 1].y,
+    (points[points.length - 1].x + points[0].x) / 2,
+    (points[points.length - 1].y + points[0].y) / 2
+  );
+  ctx.closePath();
+}
+
 async function detectAndCropFaces(imgEl) {
   const iw = imgEl.naturalWidth || imgEl.width;
   const ih = imgEl.naturalHeight || imgEl.height;
 
-  // 속도 개선: 큰 이미지 리사이즈 후 감지
+  // 큰 이미지 리사이즈 후 감지
   let detectTarget = imgEl;
   const maxDetectSize = 800;
   let scaleRatio = 1;
   if (iw > maxDetectSize || ih > maxDetectSize) {
     scaleRatio = maxDetectSize / Math.max(iw, ih);
-    const resizeCanvas = document.createElement('canvas');
-    resizeCanvas.width = Math.round(iw * scaleRatio);
-    resizeCanvas.height = Math.round(ih * scaleRatio);
-    resizeCanvas.getContext('2d').drawImage(imgEl, 0, 0, resizeCanvas.width, resizeCanvas.height);
-    detectTarget = resizeCanvas;
+    const rc = document.createElement('canvas');
+    rc.width = Math.round(iw * scaleRatio);
+    rc.height = Math.round(ih * scaleRatio);
+    rc.getContext('2d').drawImage(imgEl, 0, 0, rc.width, rc.height);
+    detectTarget = rc;
   }
 
   const options = new faceapi.TinyFaceDetectorOptions({
@@ -441,9 +432,7 @@ async function detectAndCropFaces(imgEl) {
   const results = [];
 
   detections.forEach(det => {
-    // 리사이즈된 좌표 → 원본 좌표로 역변환
-    const landmarks = det.landmarks;
-    const allPoints = landmarks.positions.map(p => ({
+    const allPoints = det.landmarks.positions.map(p => ({
       x: p.x / scaleRatio,
       y: p.y / scaleRatio
     }));
@@ -451,43 +440,49 @@ async function detectAndCropFaces(imgEl) {
     const box = det.detection.box;
     const boxH = box.height / scaleRatio;
 
-    // 얼굴 비율 → 화면 크기 매핑 (전체적으로 70% 수준으로 축소)
+    // 얼굴 비율 → 화면 크기 매핑 (원래 크기 유지)
     const faceRatio = boxH / ih;
-    const minScreenRatio = 0.055;  // 기존 0.08 → 0.055
-    const maxScreenRatio = 0.24;   // 기존 0.35 → 0.24
+    const minScreenRatio = 0.08;
+    const maxScreenRatio = 0.35;
     const clampedRatio = Math.max(0.05, Math.min(0.8, faceRatio));
     const t = (clampedRatio - 0.05) / (0.8 - 0.05);
     const screenRatio = minScreenRatio + t * (maxScreenRatio - minScreenRatio);
     const targetH_px = canvas.height * screenRatio;
 
-    // 랜드마크 인덱스 (face-api 68점 기준)
-    const jaw = allPoints.slice(0, 17);          // 턱선
-    const leftBrow = allPoints.slice(17, 22);    // 왼쪽 눈썹
-    const rightBrow = allPoints.slice(22, 27);   // 오른쪽 눈썹
+    // 랜드마크 포인트
+    const jaw = allPoints.slice(0, 17);
+    const leftBrow = allPoints.slice(17, 22);
+    const rightBrow = allPoints.slice(22, 27);
 
     const browTopY = Math.min(...leftBrow.map(p => p.y), ...rightBrow.map(p => p.y));
     const chinY = Math.max(...jaw.map(p => p.y));
-    const foreheadOffset = (chinY - browTopY) * 0.45;
+    const foreheadOffset = (chinY - browTopY) * 0.5;
     const foreheadY = browTopY - foreheadOffset;
 
+    // 윤곽 포인트: 턱선 + 이마 곡선
+    // 왼쪽 턱 끝 → 왼쪽 이마 → 정수리 → 오른쪽 이마 → 오른쪽 턱 끝 → 턱선
+    const leftTemple = { x: jaw[0].x - (jaw[2].x - jaw[0].x) * 0.1, y: foreheadY + foreheadOffset * 0.2 };
+    const rightTemple = { x: jaw[16].x + (jaw[16].x - jaw[14].x) * 0.1, y: foreheadY + foreheadOffset * 0.2 };
+    const topCenter = { x: (jaw[0].x + jaw[16].x) / 2, y: foreheadY };
+
     const contour = [
-      { x: jaw[0].x, y: jaw[0].y },
-      { x: jaw[0].x, y: foreheadY },
-      { x: (jaw[0].x + jaw[16].x) / 2, y: foreheadY },
-      { x: jaw[16].x, y: foreheadY },
-      { x: jaw[16].x, y: jaw[16].y },
+      jaw[0],
+      leftTemple,
+      topCenter,
+      rightTemple,
+      jaw[16],
       ...jaw.slice(1, 16).reverse()
     ];
 
+    // 바운딩 박스
     let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
     contour.forEach(p => {
       minX = Math.min(minX, p.x); minY = Math.min(minY, p.y);
       maxX = Math.max(maxX, p.x); maxY = Math.max(maxY, p.y);
     });
 
-    const pad = 0.05;
-    const padX = (maxX - minX) * pad;
-    const padY = (maxY - minY) * pad;
+    const padX = (maxX - minX) * 0.06;
+    const padY = (maxY - minY) * 0.06;
     minX = Math.max(0, minX - padX); minY = Math.max(0, minY - padY);
     maxX = Math.min(iw, maxX + padX); maxY = Math.min(ih, maxY + padY);
 
@@ -501,25 +496,28 @@ async function detectAndCropFaces(imgEl) {
 
     const localContour = contour.map(p => ({ x: p.x - minX, y: p.y - minY }));
 
+    // 베지어 곡선 클리핑
     fctx.save();
-    fctx.beginPath();
-    fctx.moveTo(localContour[0].x, localContour[0].y);
-    localContour.slice(1).forEach(p => fctx.lineTo(p.x, p.y));
-    fctx.closePath();
+    drawSmoothContour(fctx, localContour);
     fctx.clip();
     fctx.drawImage(imgEl, minX, minY, cropW, cropH, 0, 0, fc.width, fc.height);
     fctx.restore();
 
-    // 경계 페이드 (경량화)
+    // 외곽 페이드 16px (넓게 → 자연스러운 경계)
     const imgData = fctx.getImageData(0, 0, fc.width, fc.height);
     const d = imgData.data;
-    const fadeW = 4;
+    const fadeW = 16;
+
     for (let py = 0; py < fc.height; py++) {
       for (let px = 0; px < fc.width; px++) {
         const idx = (py * fc.width + px) * 4;
         if (d[idx + 3] === 0) continue;
         const edgeDist = Math.min(px, py, fc.width - 1 - px, fc.height - 1 - py);
-        if (edgeDist < fadeW) d[idx + 3] = Math.round(d[idx + 3] * edgeDist / fadeW);
+        if (edgeDist < fadeW) {
+          // 부드러운 감쇠 (선형 대신 ease-in)
+          const t = edgeDist / fadeW;
+          d[idx + 3] = Math.round(d[idx + 3] * t * t);
+        }
       }
     }
     fctx.putImageData(imgData, 0, 0);
@@ -669,7 +667,6 @@ async function startCamera() {
       audio: false
     });
     video.srcObject = stream;
-    // 전면 카메라일 때 좌우반전
     video.classList.toggle('mirrored', facingMode === 'user');
     cameraModal.classList.add('open');
   } catch {
@@ -696,14 +693,11 @@ shootBtn.addEventListener('click', () => {
   snapCanvas.width = vw;
   snapCanvas.height = vh;
   const sctx = snapCanvas.getContext('2d');
-
-  // 전면 카메라면 캔버스에서도 좌우반전
   if (facingMode === 'user') {
     sctx.translate(vw, 0);
     sctx.scale(-1, 1);
   }
   sctx.drawImage(video, 0, 0);
-
   const img = new Image();
   img.onload = () => enqueue(img);
   img.src = snapCanvas.toDataURL('image/jpeg', 0.92);
@@ -721,7 +715,7 @@ shakeBtn.addEventListener('click', () => {
   });
 });
 
-// 초기화 (확인 모달)
+// 초기화
 resetBtn.addEventListener('click', () => confirmModal.classList.add('show'));
 confirmNo.addEventListener('click', () => confirmModal.classList.remove('show'));
 confirmYes.addEventListener('click', () => {
