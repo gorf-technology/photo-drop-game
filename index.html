@@ -17,8 +17,6 @@
       touch-action: none;
     }
     #canvas { display: block; background: #000; }
-
-    /* 하단 UI */
     #ui {
       position: fixed;
       bottom: 28px;
@@ -49,8 +47,6 @@
       color: #ff9966;
     }
     #shakeBtn:active { background: rgba(255,100,50,0.45); }
-
-    /* 처리중 오버레이 */
     #processing {
       display: none;
       position: fixed;
@@ -73,8 +69,6 @@
       animation: spin 0.8s linear infinite;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
-
-    /* 토스트 메시지 */
     #toast {
       display: none;
       position: fixed;
@@ -91,8 +85,6 @@
       backdrop-filter: blur(8px);
     }
     #toast.show { display: block; }
-
-    /* 안내 화면 */
     #guide {
       position: fixed;
       inset: 0;
@@ -107,7 +99,6 @@
       padding: 40px;
     }
     #guide h1 { font-size: 22px; font-weight: 600; text-align: center; }
-    #guide p { font-size: 14px; color: rgba(255,255,255,0.6); text-align: center; line-height: 1.8; }
     #guide .tips {
       background: rgba(255,255,255,0.08);
       border-radius: 16px;
@@ -130,8 +121,6 @@
       margin-top: 8px;
     }
     #startBtn:active { opacity: 0.8; }
-
-    /* 카메라 모달 */
     #cameraModal {
       display: none;
       position: fixed;
@@ -170,15 +159,13 @@
       font-size: 14px;
       cursor: pointer;
     }
-    #fileInput, #snapCanvas, #offCanvas { display: none; }
+    #fileInput, #snapCanvas { display: none; }
   </style>
 </head>
 <body>
 
-<!-- 안내 화면 -->
 <div id="guide">
   <h1>😄 Face Drop</h1>
-  <p>사진에서 얼굴을 자동으로 찾아<br>하늘에서 떨어뜨려요</p>
   <div class="tips">
     ✅ 얼굴이 크고 선명한 사진<br>
     ✅ 정면 또는 약간 옆 각도<br>
@@ -189,13 +176,11 @@
 </div>
 
 <canvas id="canvas"></canvas>
-<canvas id="offCanvas"></canvas>
 
 <div id="processing">
   <div class="spinner"></div>
   <span id="processingMsg">얼굴 찾는 중...</span>
 </div>
-
 <div id="toast"></div>
 
 <div id="ui">
@@ -215,13 +200,13 @@
   </div>
 </div>
 
+<!-- MediaPipe Face Mesh -->
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_detection/face_detection.js" crossorigin="anonymous"></script>
 
 <script>
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
-const offCanvas = document.getElementById('offCanvas');
-const offCtx = offCanvas.getContext('2d');
 const fileInput = document.getElementById('fileInput');
 const uploadBtn = document.getElementById('uploadBtn');
 const cameraBtn = document.getElementById('cameraBtn');
@@ -238,10 +223,7 @@ const toastEl = document.getElementById('toast');
 const guide = document.getElementById('guide');
 const startBtn = document.getElementById('startBtn');
 
-// 안내 화면 닫기
-startBtn.addEventListener('click', () => {
-  guide.style.display = 'none';
-});
+startBtn.addEventListener('click', () => { guide.style.display = 'none'; });
 
 function resize() {
   canvas.width = window.innerWidth;
@@ -250,108 +232,161 @@ function resize() {
 resize();
 window.addEventListener('resize', resize);
 
-// 토스트 메시지
 let toastTimer = null;
-function showToast(msg) {
+function showToast(msg, color = 'rgba(220,60,60,0.9)') {
   toastEl.textContent = msg;
+  toastEl.style.background = color;
   toastEl.classList.add('show');
   if (toastTimer) clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => toastEl.classList.remove('show'), 2500);
+  toastTimer = setTimeout(() => toastEl.classList.remove('show'), 2800);
 }
 
-// MediaPipe Face Detection
+// Face Mesh 랜드마크 인덱스 — 얼굴 외곽 윤곽선
+// 이마 → 오른쪽 → 턱 → 왼쪽 순서 (OVAL)
+const FACE_OVAL = [
+  10, 338, 297, 332, 284, 251, 389, 356, 454, 323, 361, 288,
+  397, 365, 379, 378, 400, 377, 152, 148, 176, 149, 150, 136,
+  172, 58, 132, 93, 234, 127, 162, 21, 54, 103, 67, 109
+];
+
+let faceMesh = null;
+let meshReady = false;
 let faceDetector = null;
 let detectorReady = false;
 
-function initDetector() {
-  if (detectorReady || typeof FaceDetection === 'undefined') return;
-  try {
+function initModels() {
+  // Face Detection (얼굴 위치 파악용)
+  if (!detectorReady && typeof FaceDetection !== 'undefined') {
     faceDetector = new FaceDetection({
       locateFile: f => `https://cdn.jsdelivr.net/npm/@mediapipe/face_detection/${f}`
     });
-    faceDetector.setOptions({
-      model: 'short',       // 근거리 얼굴 모델 (빠름)
-      minDetectionConfidence: 0.5
+    faceDetector.setOptions({ model: 'short', minDetectionConfidence: 0.5 });
+    faceDetector.initialize().then(() => { detectorReady = true; }).catch(() => {});
+  }
+
+  // Face Mesh (윤곽선 추출용)
+  if (!meshReady && typeof FaceMesh !== 'undefined') {
+    faceMesh = new FaceMesh({
+      locateFile: f => `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${f}`
     });
-    faceDetector.initialize().then(() => {
-      detectorReady = true;
-    }).catch(() => { detectorReady = false; });
-  } catch(e) { detectorReady = false; }
+    faceMesh.setOptions({
+      maxNumFaces: 10,
+      refineLandmarks: false,
+      minDetectionConfidence: 0.5,
+      minTrackingConfidence: 0.5
+    });
+    faceMesh.initialize().then(() => { meshReady = true; }).catch(() => {});
+  }
 }
 
-// 얼굴 감지 + 각 얼굴 누끼 크롭
-async function detectAndCropFaces(imgEl) {
-  if (!detectorReady || !faceDetector) return [];
+async function waitReady(checkFn, timeout = 8000) {
+  return new Promise(resolve => {
+    const interval = setInterval(() => {
+      if (checkFn()) { clearInterval(interval); resolve(true); }
+    }, 200);
+    setTimeout(() => { clearInterval(interval); resolve(false); }, timeout);
+  });
+}
 
-  return new Promise((resolve) => {
-    const timeout = setTimeout(() => resolve([]), 5000);
+// Face Mesh로 얼굴 윤곽 폴리곤 추출
+async function getFacePolygons(imgEl) {
+  if (!meshReady || !faceMesh) return [];
 
-    faceDetector.onResults((results) => {
+  return new Promise(resolve => {
+    const timeout = setTimeout(() => resolve([]), 6000);
+
+    faceMesh.onResults(results => {
       clearTimeout(timeout);
-      if (!results.detections || results.detections.length === 0) {
+      if (!results.multiFaceLandmarks || results.multiFaceLandmarks.length === 0) {
         resolve([]);
         return;
       }
 
-      const faces = [];
       const iw = imgEl.naturalWidth || imgEl.width;
       const ih = imgEl.naturalHeight || imgEl.height;
+      const polygons = [];
 
-      results.detections.forEach(det => {
-        const box = det.boundingBox;
-        // 박스 좌표 (0~1 정규화 → 픽셀)
-        let x = box.xCenter * iw - (box.width * iw) / 2;
-        let y = box.yCenter * ih - (box.height * ih) / 2;
-        let w = box.width * iw;
-        let h = box.height * ih;
+      results.multiFaceLandmarks.forEach(landmarks => {
+        // OVAL 랜드마크만 추출
+        const points = FACE_OVAL.map(idx => ({
+          x: landmarks[idx].x * iw,
+          y: landmarks[idx].y * ih
+        }));
 
-        // 여백 20% 추가 (머리카락·턱 포함)
-        const padX = w * 0.25;
-        const padY = h * 0.3;
-        x = Math.max(0, x - padX);
-        y = Math.max(0, y - padY);
-        w = Math.min(iw - x, w + padX * 2);
-        h = Math.min(ih - y, h + padY * 2);
+        // 바운딩 박스 계산
+        let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+        points.forEach(p => {
+          minX = Math.min(minX, p.x);
+          minY = Math.min(minY, p.y);
+          maxX = Math.max(maxX, p.x);
+          maxY = Math.max(maxY, p.y);
+        });
 
-        // 얼굴 크롭 캔버스
+        // 여백 추가
+        const padX = (maxX - minX) * 0.08;
+        const padY = (maxY - minY) * 0.1;
+        minX = Math.max(0, minX - padX);
+        minY = Math.max(0, minY - padY);
+        maxX = Math.min(iw, maxX + padX);
+        maxY = Math.min(ih, maxY + padY);
+
+        const cropW = maxX - minX;
+        const cropH = maxY - minY;
+
+        // 폴리곤 좌표를 크롭 기준으로 변환
+        const localPoints = points.map(p => ({
+          x: p.x - minX,
+          y: p.y - minY
+        }));
+
+        // 크롭 캔버스 생성
         const fc = document.createElement('canvas');
-        fc.width = Math.round(w);
-        fc.height = Math.round(h);
+        fc.width = Math.round(cropW);
+        fc.height = Math.round(cropH);
         const fctx = fc.getContext('2d');
 
-        // 타원 마스크 클리핑 (얼굴 윤곽)
+        // 얼굴 윤곽 폴리곤 클리핑
         fctx.save();
         fctx.beginPath();
-        fctx.ellipse(
-          fc.width / 2, fc.height / 2,
-          fc.width / 2, fc.height / 2,
-          0, 0, Math.PI * 2
-        );
+        fctx.moveTo(localPoints[0].x, localPoints[0].y);
+        localPoints.slice(1).forEach(p => fctx.lineTo(p.x, p.y));
         fctx.closePath();
         fctx.clip();
-        fctx.drawImage(imgEl, x, y, w, h, 0, 0, fc.width, fc.height);
+
+        // 원본 이미지 크롭 영역 그리기
+        fctx.drawImage(imgEl, minX, minY, cropW, cropH, 0, 0, fc.width, fc.height);
         fctx.restore();
 
-        // 엣지 페이더 (경계 부드럽게)
+        // 경계 페이드 (폴리곤 엣지 부드럽게)
         const imgData = fctx.getImageData(0, 0, fc.width, fc.height);
         const d = imgData.data;
-        const cx = fc.width / 2;
-        const cy = fc.height / 2;
-        const rx = fc.width / 2;
-        const ry = fc.height / 2;
-        const fadeZone = 0.12; // 외곽 12% 페이드
 
+        // 각 픽셀이 폴리곤 내부인지 체크 + 엣지 거리로 페이드
         for (let py = 0; py < fc.height; py++) {
           for (let px = 0; px < fc.width; px++) {
             const idx = (py * fc.width + px) * 4;
-            const ex = (px - cx) / rx;
-            const ey = (py - cy) / ry;
-            const dist = Math.sqrt(ex * ex + ey * ey);
-            if (dist >= 1) {
-              d[idx + 3] = 0;
-            } else if (dist > 1 - fadeZone) {
-              const fade = (1 - dist) / fadeZone;
-              d[idx + 3] = Math.round(d[idx + 3] * fade);
+            if (d[idx + 3] === 0) continue;
+
+            // 폴리곤 경계까지의 최소 거리
+            let minEdgeDist = Infinity;
+            for (let k = 0; k < localPoints.length; k++) {
+              const p1 = localPoints[k];
+              const p2 = localPoints[(k + 1) % localPoints.length];
+              const dx = p2.x - p1.x;
+              const dy = p2.y - p1.y;
+              const len = Math.sqrt(dx * dx + dy * dy);
+              if (len < 0.001) continue;
+              const t = Math.max(0, Math.min(1, ((px - p1.x) * dx + (py - p1.y) * dy) / (len * len)));
+              const closestX = p1.x + t * dx;
+              const closestY = p1.y + t * dy;
+              const dist = Math.sqrt((px - closestX) ** 2 + (py - closestY) ** 2);
+              minEdgeDist = Math.min(minEdgeDist, dist);
+            }
+
+            // 엣지 8px 페이드
+            const fadeWidth = 8;
+            if (minEdgeDist < fadeWidth) {
+              d[idx + 3] = Math.round(d[idx + 3] * (minEdgeDist / fadeWidth));
             }
           }
         }
@@ -359,17 +394,21 @@ async function detectAndCropFaces(imgEl) {
 
         const faceImg = new Image();
         faceImg.src = fc.toDataURL('image/png');
-        faces.push({ img: faceImg, w: fc.width, h: fc.height });
+        polygons.push({
+          img: faceImg,
+          w: fc.width,
+          h: fc.height,
+          points: localPoints
+        });
       });
 
-      // 모든 이미지 로드 대기
-      Promise.all(faces.map(f => new Promise(res => {
-        if (f.img.complete) res();
-        else f.img.onload = res;
-      }))).then(() => resolve(faces));
+      Promise.all(polygons.map(p => new Promise(res => {
+        if (p.img.complete) res();
+        else p.img.onload = res;
+      }))).then(() => resolve(polygons));
     });
 
-    faceDetector.send({ image: imgEl }).catch(() => {
+    faceMesh.send({ image: imgEl }).catch(() => {
       clearTimeout(timeout);
       resolve([]);
     });
@@ -399,10 +438,9 @@ class FaceObject {
     this.isDragging = false;
     this.lastX = x;
     this.lastY = y;
-    // 타원 충돌체 (얼굴 모양)
-    this.rx = w * 0.46; // 가로 반지름
-    this.ry = h * 0.46; // 세로 반지름
-    this.r = Math.min(this.rx, this.ry); // 충돌 계산용 근사 반지름
+    this.rx = w * 0.44;
+    this.ry = h * 0.44;
+    this.r = Math.min(this.rx, this.ry);
   }
 
   update() {
@@ -414,7 +452,6 @@ class FaceObject {
     this.angle += this.av;
     this.av *= ANGULAR_DAMP;
 
-    // 바닥
     const floor = canvas.height - this.ry;
     if (this.y >= floor) {
       this.y = floor;
@@ -423,13 +460,11 @@ class FaceObject {
       this.av *= FLOOR_FRICTION;
       if (Math.abs(this.vy) < 1.0) this.vy = 0;
     }
-    // 왼쪽 벽
     if (this.x - this.rx <= 0) {
       this.x = this.rx;
       this.vx = Math.abs(this.vx) * BOUNCE;
       this.av *= -0.4;
     }
-    // 오른쪽 벽
     if (this.x + this.rx >= canvas.width) {
       this.x = canvas.width - this.rx;
       this.vx = -Math.abs(this.vx) * BOUNCE;
@@ -442,21 +477,19 @@ class FaceObject {
     ctx.translate(this.x, this.y);
     ctx.rotate(this.angle);
     ctx.shadowColor = 'rgba(0,0,0,0.7)';
-    ctx.shadowBlur = 14;
-    ctx.shadowOffsetY = 6;
+    ctx.shadowBlur = 16;
+    ctx.shadowOffsetY = 7;
     ctx.drawImage(this.img, -this.w / 2, -this.h / 2, this.w, this.h);
     ctx.restore();
   }
 
   hitTest(px, py) {
-    // 타원 히트 테스트
     const dx = (px - this.x) / this.rx;
     const dy = (py - this.y) / this.ry;
     return dx * dx + dy * dy <= 1;
   }
 }
 
-// 충돌 처리
 function resolveCollisions() {
   for (let iter = 0; iter < 3; iter++) {
     for (let i = 0; i < objects.length; i++) {
@@ -486,32 +519,29 @@ function resolveCollisions() {
   }
 }
 
-// 사진 처리 메인
 async function processImage(imgEl) {
   processingEl.classList.add('show');
-  processingMsg.textContent = '얼굴 찾는 중...';
+  processingMsg.textContent = '모델 로딩 중...';
 
-  if (!detectorReady) {
-    processingMsg.textContent = '모델 로딩 중...';
-    initDetector();
-    await new Promise(resolve => {
-      const check = setInterval(() => {
-        if (detectorReady) { clearInterval(check); resolve(); }
-      }, 200);
-      setTimeout(() => { clearInterval(check); resolve(); }, 6000);
-    });
+  if (!meshReady) {
+    initModels();
+    const ok = await waitReady(() => meshReady);
+    if (!ok) {
+      processingEl.classList.remove('show');
+      showToast('😅 모델 로딩 실패. 다시 시도해주세요.');
+      return;
+    }
   }
 
-  processingMsg.textContent = '얼굴 누끼 따는 중...';
-  const faces = await detectAndCropFaces(imgEl);
+  processingMsg.textContent = '얼굴 윤곽 따는 중...';
+  const faces = await getFacePolygons(imgEl);
   processingEl.classList.remove('show');
 
   if (faces.length === 0) {
-    showToast('😅 얼굴을 찾지 못했어요. 다른 사진을 써주세요.');
+    showToast('😅 얼굴을 찾지 못했어요. 정면 사진을 써주세요.');
     return;
   }
 
-  // 각 얼굴을 화면 크기에 맞게 조절 후 떨어뜨림
   faces.forEach(face => {
     const maxH = Math.min(canvas.height * 0.28, 200);
     const scale = maxH / face.h;
@@ -523,7 +553,7 @@ async function processImage(imgEl) {
   });
 
   if (faces.length > 1) {
-    showToast(`😊 얼굴 ${faces.length}개 발견!`);
+    showToast(`😊 얼굴 ${faces.length}개 발견!`, 'rgba(40,160,80,0.9)');
   }
 }
 
@@ -656,7 +686,7 @@ function loop() {
 loop();
 
 // 미리 모델 로드
-initDetector();
+initModels();
 
 if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
 </script>
