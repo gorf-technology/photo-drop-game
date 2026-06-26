@@ -1,4 +1,4 @@
-const CACHE = 'face-drop-v3';
+const CACHE = 'face-drop-v6';
 const FILES = [
   '/photo-drop-game/',
   '/photo-drop-game/index.html',
