@@ -160,6 +160,16 @@
       cursor: pointer;
     }
     #fileInput, #snapCanvas { display: none; }
+    #version {
+      position: fixed;
+      bottom: 8px;
+      right: 12px;
+      color: rgba(255,255,255,0.2);
+      font-size: 10px;
+      pointer-events: none;
+      z-index: 5;
+      letter-spacing: 0.5px;
+    }
   </style>
 </head>
 <body>
@@ -176,6 +186,7 @@
 </div>
 
 <canvas id="canvas"></canvas>
+<div id="version">v0.4</div>
 
 <div id="processing">
   <div class="spinner"></div>
