@@ -167,7 +167,7 @@
 <div id="guide">
   <h1>😄 Face Drop</h1>
   <div class="tips">
-    ✅ 얼굴이 크고 선명한 사진<br>
+    ✅ 얼굴이 잘 보이는 사진<br>
     ✅ 정면 또는 약간 옆 각도<br>
     ✅ 밝은 조명<br>
     ✅ 여러 명이면 각각 따로 떨어져요
@@ -200,9 +200,8 @@
   </div>
 </div>
 
-<!-- MediaPipe Face Mesh -->
-<script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_detection/face_detection.js" crossorigin="anonymous"></script>
+<!-- face-api.js: Safari 호환성 좋은 얼굴 감지 라이브러리 -->
+<script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
 
 <script>
 const canvas = document.getElementById('canvas');
@@ -241,178 +240,157 @@ function showToast(msg, color = 'rgba(220,60,60,0.9)') {
   toastTimer = setTimeout(() => toastEl.classList.remove('show'), 2800);
 }
 
-// Face Mesh 랜드마크 인덱스 — 얼굴 외곽 윤곽선
-// 이마 → 오른쪽 → 턱 → 왼쪽 순서 (OVAL)
-const FACE_OVAL = [
-  10, 338, 297, 332, 284, 251, 389, 356, 454, 323, 361, 288,
-  397, 365, 379, 378, 400, 377, 152, 148, 176, 149, 150, 136,
-  172, 58, 132, 93, 234, 127, 162, 21, 54, 103, 67, 109
-];
+// face-api.js 모델 로딩
+const MODEL_URL = 'https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/weights';
+let modelsLoaded = false;
 
-let faceMesh = null;
-let meshReady = false;
-let faceDetector = null;
-let detectorReady = false;
-
-function initModels() {
-  // Face Detection (얼굴 위치 파악용)
-  if (!detectorReady && typeof FaceDetection !== 'undefined') {
-    faceDetector = new FaceDetection({
-      locateFile: f => `https://cdn.jsdelivr.net/npm/@mediapipe/face_detection/${f}`
-    });
-    faceDetector.setOptions({ model: 'short', minDetectionConfidence: 0.5 });
-    faceDetector.initialize().then(() => { detectorReady = true; }).catch(() => {});
-  }
-
-  // Face Mesh (윤곽선 추출용)
-  if (!meshReady && typeof FaceMesh !== 'undefined') {
-    faceMesh = new FaceMesh({
-      locateFile: f => `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${f}`
-    });
-    faceMesh.setOptions({
-      maxNumFaces: 10,
-      refineLandmarks: false,
-      minDetectionConfidence: 0.5,
-      minTrackingConfidence: 0.5
-    });
-    faceMesh.initialize().then(() => { meshReady = true; }).catch(() => {});
+async function loadModels() {
+  if (modelsLoaded) return true;
+  try {
+    await Promise.all([
+      faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL),
+      faceapi.nets.faceLandmark68TinyNet.loadFromUri(MODEL_URL),
+    ]);
+    modelsLoaded = true;
+    return true;
+  } catch(e) {
+    return false;
   }
 }
 
-async function waitReady(checkFn, timeout = 8000) {
-  return new Promise(resolve => {
-    const interval = setInterval(() => {
-      if (checkFn()) { clearInterval(interval); resolve(true); }
-    }, 200);
-    setTimeout(() => { clearInterval(interval); resolve(false); }, timeout);
-  });
-}
+// 얼굴 감지 + 크롭
+async function detectAndCropFaces(imgEl) {
+  const iw = imgEl.naturalWidth || imgEl.width;
+  const ih = imgEl.naturalHeight || imgEl.height;
 
-// Face Mesh로 얼굴 윤곽 폴리곤 추출
-async function getFacePolygons(imgEl) {
-  if (!meshReady || !faceMesh) return [];
+  const detections = await faceapi
+    .detectAllFaces(imgEl, new faceapi.TinyFaceDetectorOptions({ scoreThreshold: 0.4 }))
+    .withFaceLandmarks(true);
 
-  return new Promise(resolve => {
-    const timeout = setTimeout(() => resolve([]), 6000);
+  if (!detections || detections.length === 0) return [];
 
-    faceMesh.onResults(results => {
-      clearTimeout(timeout);
-      if (!results.multiFaceLandmarks || results.multiFaceLandmarks.length === 0) {
-        resolve([]);
-        return;
-      }
+  const results = [];
 
-      const iw = imgEl.naturalWidth || imgEl.width;
-      const ih = imgEl.naturalHeight || imgEl.height;
-      const polygons = [];
+  detections.forEach(det => {
+    const box = det.detection.box;
+    const landmarks = det.landmarks;
 
-      results.multiFaceLandmarks.forEach(landmarks => {
-        // OVAL 랜드마크만 추출
-        const points = FACE_OVAL.map(idx => ({
-          x: landmarks[idx].x * iw,
-          y: landmarks[idx].y * ih
-        }));
+    // 사진 내 얼굴 비율 계산 (얼굴 높이 / 사진 높이)
+    const faceRatio = box.height / ih;
 
-        // 바운딩 박스 계산
-        let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
-        points.forEach(p => {
-          minX = Math.min(minX, p.x);
-          minY = Math.min(minY, p.y);
-          maxX = Math.max(maxX, p.x);
-          maxY = Math.max(maxY, p.y);
-        });
+    // 화면 기준 목표 크기 결정
+    // faceRatio 0.05 (작음) ~ 0.8 (증명사진) 범위를 화면의 8%~35%로 매핑
+    const minScreenRatio = 0.08;
+    const maxScreenRatio = 0.35;
+    const clampedRatio = Math.max(0.05, Math.min(0.8, faceRatio));
+    const t = (clampedRatio - 0.05) / (0.8 - 0.05);
+    const screenRatio = minScreenRatio + t * (maxScreenRatio - minScreenRatio);
+    const targetH_px = canvas.height * screenRatio;
 
-        // 여백 추가
-        const padX = (maxX - minX) * 0.08;
-        const padY = (maxY - minY) * 0.1;
-        minX = Math.max(0, minX - padX);
-        minY = Math.max(0, minY - padY);
-        maxX = Math.min(iw, maxX + padX);
-        maxY = Math.min(ih, maxY + padY);
+    // 랜드마크로 얼굴 윤곽 폴리곤 추출
+    const jawPoints = landmarks.getJawOutline();       // 턱선 17점
+    const leftBrow = landmarks.getLeftEyeBrow();       // 왼쪽 눈썹
+    const rightBrow = landmarks.getRightEyeBrow();     // 오른쪽 눈썹
 
-        const cropW = maxX - minX;
-        const cropH = maxY - minY;
+    // 이마 추정: 눈썹 위로 눈썹~턱 거리의 40% 올림
+    const browTopY = Math.min(...leftBrow.map(p => p.y), ...rightBrow.map(p => p.y));
+    const chinY = Math.max(...jawPoints.map(p => p.y));
+    const foreheadOffset = (chinY - browTopY) * 0.42;
 
-        // 폴리곤 좌표를 크롭 기준으로 변환
-        const localPoints = points.map(p => ({
-          x: p.x - minX,
-          y: p.y - minY
-        }));
+    // 윤곽 폴리곤 구성: 왼쪽 눈썹 → 이마 → 오른쪽 눈썹 → 턱선
+    const leftBrowX = leftBrow[0].x;
+    const rightBrowX = rightBrow[rightBrow.length - 1].x;
+    const foreheadY = browTopY - foreheadOffset;
 
-        // 크롭 캔버스 생성
-        const fc = document.createElement('canvas');
-        fc.width = Math.round(cropW);
-        fc.height = Math.round(cropH);
-        const fctx = fc.getContext('2d');
+    const contour = [
+      // 왼쪽 → 이마 → 오른쪽 (위쪽 호)
+      { x: jawPoints[0].x, y: jawPoints[0].y },
+      { x: leftBrowX, y: foreheadY },
+      { x: (leftBrowX + rightBrowX) / 2, y: foreheadY - foreheadOffset * 0.1 },
+      { x: rightBrowX, y: foreheadY },
+      { x: jawPoints[16].x, y: jawPoints[16].y },
+      // 턱선 (아래쪽)
+      ...jawPoints.slice(1, 16).reverse().map(p => ({ x: p.x, y: p.y }))
+    ];
 
-        // 얼굴 윤곽 폴리곤 클리핑
-        fctx.save();
-        fctx.beginPath();
-        fctx.moveTo(localPoints[0].x, localPoints[0].y);
-        localPoints.slice(1).forEach(p => fctx.lineTo(p.x, p.y));
-        fctx.closePath();
-        fctx.clip();
+    // 바운딩 박스
+    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+    contour.forEach(p => {
+      minX = Math.min(minX, p.x);
+      minY = Math.min(minY, p.y);
+      maxX = Math.max(maxX, p.x);
+      maxY = Math.max(maxY, p.y);
+    });
 
-        // 원본 이미지 크롭 영역 그리기
-        fctx.drawImage(imgEl, minX, minY, cropW, cropH, 0, 0, fc.width, fc.height);
-        fctx.restore();
+    // 여백 5%
+    const padX = (maxX - minX) * 0.05;
+    const padY = (maxY - minY) * 0.05;
+    minX = Math.max(0, minX - padX);
+    minY = Math.max(0, minY - padY);
+    maxX = Math.min(iw, maxX + padX);
+    maxY = Math.min(ih, maxY + padY);
 
-        // 경계 페이드 (폴리곤 엣지 부드럽게)
-        const imgData = fctx.getImageData(0, 0, fc.width, fc.height);
-        const d = imgData.data;
+    const cropW = maxX - minX;
+    const cropH = maxY - minY;
 
-        // 각 픽셀이 폴리곤 내부인지 체크 + 엣지 거리로 페이드
-        for (let py = 0; py < fc.height; py++) {
-          for (let px = 0; px < fc.width; px++) {
-            const idx = (py * fc.width + px) * 4;
-            if (d[idx + 3] === 0) continue;
+    // 크롭 캔버스
+    const fc = document.createElement('canvas');
+    fc.width = Math.round(cropW);
+    fc.height = Math.round(cropH);
+    const fctx = fc.getContext('2d');
 
-            // 폴리곤 경계까지의 최소 거리
-            let minEdgeDist = Infinity;
-            for (let k = 0; k < localPoints.length; k++) {
-              const p1 = localPoints[k];
-              const p2 = localPoints[(k + 1) % localPoints.length];
-              const dx = p2.x - p1.x;
-              const dy = p2.y - p1.y;
-              const len = Math.sqrt(dx * dx + dy * dy);
-              if (len < 0.001) continue;
-              const t = Math.max(0, Math.min(1, ((px - p1.x) * dx + (py - p1.y) * dy) / (len * len)));
-              const closestX = p1.x + t * dx;
-              const closestY = p1.y + t * dy;
-              const dist = Math.sqrt((px - closestX) ** 2 + (py - closestY) ** 2);
-              minEdgeDist = Math.min(minEdgeDist, dist);
-            }
+    // 로컬 좌표로 변환
+    const localContour = contour.map(p => ({ x: p.x - minX, y: p.y - minY }));
 
-            // 엣지 8px 페이드
-            const fadeWidth = 8;
-            if (minEdgeDist < fadeWidth) {
-              d[idx + 3] = Math.round(d[idx + 3] * (minEdgeDist / fadeWidth));
-            }
-          }
+    // 폴리곤 클리핑
+    fctx.save();
+    fctx.beginPath();
+    fctx.moveTo(localContour[0].x, localContour[0].y);
+    localContour.slice(1).forEach(p => fctx.lineTo(p.x, p.y));
+    fctx.closePath();
+    fctx.clip();
+    fctx.drawImage(imgEl, minX, minY, cropW, cropH, 0, 0, fc.width, fc.height);
+    fctx.restore();
+
+    // 경계 페이드
+    const imgData = fctx.getImageData(0, 0, fc.width, fc.height);
+    const d = imgData.data;
+    const fadeWidth = 6;
+
+    for (let py = 0; py < fc.height; py++) {
+      for (let px = 0; px < fc.width; px++) {
+        const idx = (py * fc.width + px) * 4;
+        if (d[idx + 3] === 0) continue;
+        let minEdge = Infinity;
+        for (let k = 0; k < localContour.length; k++) {
+          const p1 = localContour[k];
+          const p2 = localContour[(k + 1) % localContour.length];
+          const dx = p2.x - p1.x;
+          const dy = p2.y - p1.y;
+          const len = Math.sqrt(dx*dx + dy*dy);
+          if (len < 0.001) continue;
+          const t = Math.max(0, Math.min(1, ((px-p1.x)*dx + (py-p1.y)*dy) / (len*len)));
+          const dist = Math.sqrt((px - p1.x - t*dx)**2 + (py - p1.y - t*dy)**2);
+          minEdge = Math.min(minEdge, dist);
         }
-        fctx.putImageData(imgData, 0, 0);
+        if (minEdge < fadeWidth) {
+          d[idx + 3] = Math.round(d[idx + 3] * (minEdge / fadeWidth));
+        }
+      }
+    }
+    fctx.putImageData(imgData, 0, 0);
 
-        const faceImg = new Image();
-        faceImg.src = fc.toDataURL('image/png');
-        polygons.push({
-          img: faceImg,
-          w: fc.width,
-          h: fc.height,
-          points: localPoints
-        });
-      });
-
-      Promise.all(polygons.map(p => new Promise(res => {
-        if (p.img.complete) res();
-        else p.img.onload = res;
-      }))).then(() => resolve(polygons));
-    });
-
-    faceMesh.send({ image: imgEl }).catch(() => {
-      clearTimeout(timeout);
-      resolve([]);
-    });
+    const faceImg = new Image();
+    faceImg.src = fc.toDataURL('image/png');
+    results.push({ img: faceImg, cropW, cropH, targetH: targetH_px });
   });
+
+  await Promise.all(results.map(r => new Promise(res => {
+    if (r.img.complete) res();
+    else r.img.onload = res;
+  })));
+
+  return results;
 }
 
 // 물리 상수
@@ -512,8 +490,8 @@ function resolveCollisions() {
         const dot = relVx * nx + relVy * ny;
         if (dot <= 0) continue;
         const impulse = dot * 0.6;
-        if (!a.isDragging) { a.vx -= impulse * nx; a.vy -= impulse * ny; a.av += impulse * 0.025 * (Math.random()-0.5); }
-        if (!b.isDragging) { b.vx += impulse * nx; b.vy += impulse * ny; b.av -= impulse * 0.025 * (Math.random()-0.5); }
+        if (!a.isDragging) { a.vx -= impulse * nx; a.vy -= impulse * ny; a.av += impulse * 0.025*(Math.random()-0.5); }
+        if (!b.isDragging) { b.vx += impulse * nx; b.vy += impulse * ny; b.av -= impulse * 0.025*(Math.random()-0.5); }
       }
     }
   }
@@ -523,18 +501,15 @@ async function processImage(imgEl) {
   processingEl.classList.add('show');
   processingMsg.textContent = '모델 로딩 중...';
 
-  if (!meshReady) {
-    initModels();
-    const ok = await waitReady(() => meshReady);
-    if (!ok) {
-      processingEl.classList.remove('show');
-      showToast('😅 모델 로딩 실패. 다시 시도해주세요.');
-      return;
-    }
+  const ok = await loadModels();
+  if (!ok) {
+    processingEl.classList.remove('show');
+    showToast('😅 모델 로딩 실패. 인터넷 연결을 확인해주세요.');
+    return;
   }
 
-  processingMsg.textContent = '얼굴 윤곽 따는 중...';
-  const faces = await getFacePolygons(imgEl);
+  processingMsg.textContent = '얼굴 찾는 중...';
+  const faces = await detectAndCropFaces(imgEl);
   processingEl.classList.remove('show');
 
   if (faces.length === 0) {
@@ -543,10 +518,10 @@ async function processImage(imgEl) {
   }
 
   faces.forEach(face => {
-    const maxH = Math.min(canvas.height * 0.28, 200);
-    const scale = maxH / face.h;
-    const fw = face.w * scale;
-    const fh = face.h * scale;
+    // 사진 내 얼굴 비율 반영한 크기로 떨어뜨림
+    const scale = face.targetH / face.cropH;
+    const fw = face.cropW * scale;
+    const fh = face.targetH;
     const x = fw / 2 + Math.random() * (canvas.width - fw);
     const y = -fh;
     objects.push(new FaceObject(face.img, x, y, fw, fh));
@@ -685,8 +660,8 @@ function loop() {
 }
 loop();
 
-// 미리 모델 로드
-initModels();
+// 백그라운드에서 미리 모델 로드
+loadModels();
 
 if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
 </script>
