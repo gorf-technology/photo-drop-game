@@ -17,6 +17,8 @@
       touch-action: none;
     }
     #canvas { display: block; background: #000; }
+
+    /* 상단 보조 버튼 */
     #topUI {
       position: fixed;
       top: 20px;
@@ -24,7 +26,6 @@
       display: flex;
       gap: 8px;
       z-index: 10;
-      align-items: center;
     }
     .btnSm {
       background: rgba(255,255,255,0.1);
@@ -37,38 +38,52 @@
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
       white-space: nowrap;
-      transition: background 0.12s;
     }
     .btnSm:active { background: rgba(255,255,255,0.25); }
-    #bottomUI {
+
+    /* 하단 패널 — 얼굴과 분리된 영역 */
+    #bottomPanel {
       position: fixed;
-      bottom: 32px;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      gap: 16px;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 90px;
+      background: rgba(10,10,10,0.92);
+      border-top: 1px solid rgba(255,255,255,0.12);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
       z-index: 10;
+      display: flex;
       align-items: center;
+      justify-content: center;
+      gap: 16px;
+      padding-bottom: env(safe-area-inset-bottom);
     }
     .btnMain {
-      background: rgba(255,255,255,0.13);
+      background: rgba(255,255,255,0.1);
       color: #fff;
-      border: 1.5px solid rgba(255,255,255,0.3);
-      border-radius: 60px;
-      padding: 16px 32px;
-      font-size: 15px;
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 50px;
+      padding: 13px 28px;
+      font-size: 14px;
       font-weight: 500;
       cursor: pointer;
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
       white-space: nowrap;
       transition: background 0.12s, transform 0.08s;
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 7px;
     }
-    .btnMain:active { background: rgba(255,255,255,0.28); transform: scale(0.96); }
+    .btnMain:active { background: rgba(255,255,255,0.25); transform: scale(0.96); }
     .btnMain:disabled { opacity: 0.3; pointer-events: none; }
+    #shakeMainBtn {
+      background: rgba(255,100,50,0.18);
+      border-color: rgba(255,120,60,0.35);
+      color: #ff9966;
+    }
+    #shakeMainBtn:active { background: rgba(255,100,50,0.4); }
+
+    /* 모델 로딩 */
     #modelStatus {
       position: fixed;
       top: 20px;
@@ -95,28 +110,56 @@
       padding: 7px 13px;
       font-size: 11px;
       z-index: 300;
-      backdrop-filter: blur(8px);
     }
     #queueBadge.show { display: block; }
+
+    /* 토스트 */
     #toast {
       display: none;
       position: fixed;
-      bottom: 110px;
+      bottom: 105px;
       left: 50%;
       transform: translateX(-50%);
       background: rgba(30,30,30,0.9);
       color: #fff;
       border-radius: 50px;
-      padding: 12px 24px;
-      font-size: 14px;
+      padding: 11px 22px;
+      font-size: 13px;
       z-index: 300;
       white-space: nowrap;
       backdrop-filter: blur(8px);
     }
     #toast.show { display: block; }
+
+    /* 꾹 누르기 선택 링 */
+    #selectRing {
+      display: none;
+      position: fixed;
+      border: 2px solid rgba(255,255,255,0.8);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 20;
+      box-shadow: 0 0 12px rgba(255,255,255,0.3);
+    }
+    #selectRing.show { display: block; }
+    #sizeHint {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: rgba(255,255,255,0.5);
+      font-size: 12px;
+      pointer-events: none;
+      z-index: 21;
+      text-align: center;
+    }
+    #sizeHint.show { display: block; }
+
+    /* 기타 */
     #faceCounter {
       position: fixed;
-      bottom: 8px;
+      bottom: 96px;
       left: 12px;
       color: rgba(255,255,255,0.2);
       font-size: 10px;
@@ -125,13 +168,15 @@
     }
     #version {
       position: fixed;
-      bottom: 8px;
+      bottom: 96px;
       right: 12px;
       color: rgba(255,255,255,0.2);
       font-size: 10px;
       pointer-events: none;
       z-index: 5;
     }
+
+    /* 안내 화면 */
     #guide {
       position: fixed;
       inset: 0;
@@ -168,6 +213,8 @@
       cursor: pointer;
     }
     #startBtn:active { opacity: 0.8; }
+
+    /* 확인 모달 */
     #confirmModal {
       display: none;
       position: fixed;
@@ -193,6 +240,8 @@
     #confirmBox button { border-radius: 50px; padding: 11px 24px; font-size: 14px; cursor: pointer; border: none; }
     #confirmYes { background: #ff4444; color: #fff; }
     #confirmNo { background: rgba(255,255,255,0.12); color: #fff; }
+
+    /* 카메라 */
     #cameraModal {
       display: none;
       position: fixed;
@@ -243,26 +292,29 @@
     ✅ 얼굴이 잘 보이는 사진<br>
     ✅ 정면 또는 약간 옆 각도<br>
     ✅ 단체사진도 OK<br>
-    ✅ 밝은 조명
+    ✅ 꾹 누르면 크기 조절 가능
   </div>
   <button id="startBtn">시작하기</button>
 </div>
 
 <canvas id="canvas"></canvas>
-<div id="version">v0.8</div>
+<div id="version">v0.9</div>
 <div id="faceCounter">얼굴 0개</div>
 <div id="modelStatus">⏳ 모델 로딩 중...</div>
 <div id="queueBadge"></div>
 <div id="toast"></div>
+<div id="selectRing"></div>
+<div id="sizeHint">위아래로 드래그해서<br>크기를 조절하세요</div>
 
 <div id="topUI">
-  <button class="btnSm" id="shakeBtn">🫨 흔들기</button>
   <button class="btnSm" id="resetBtn">🗑 초기화</button>
 </div>
 
-<div id="bottomUI">
-  <button class="btnMain" id="cameraBtn" disabled>📷 <span>촬영</span></button>
-  <button class="btnMain" id="uploadBtn" disabled>🖼 <span>갤러리</span></button>
+<!-- 하단 분리 패널 -->
+<div id="bottomPanel">
+  <button class="btnMain" id="cameraBtn" disabled>📷 촬영</button>
+  <button class="btnMain" id="uploadBtn" disabled>🖼 갤러리</button>
+  <button class="btnMain" id="shakeMainBtn">🫨 흔들기</button>
   <input type="file" id="fileInput" accept="image/*" multiple>
 </div>
 
@@ -294,7 +346,7 @@ const ctx = canvas.getContext('2d');
 const fileInput = document.getElementById('fileInput');
 const uploadBtn = document.getElementById('uploadBtn');
 const cameraBtn = document.getElementById('cameraBtn');
-const shakeBtn = document.getElementById('shakeBtn');
+const shakeMainBtn = document.getElementById('shakeMainBtn');
 const resetBtn = document.getElementById('resetBtn');
 const cameraModal = document.getElementById('cameraModal');
 const video = document.getElementById('video');
@@ -311,6 +363,11 @@ const faceCounter = document.getElementById('faceCounter');
 const confirmModal = document.getElementById('confirmModal');
 const confirmYes = document.getElementById('confirmYes');
 const confirmNo = document.getElementById('confirmNo');
+const selectRing = document.getElementById('selectRing');
+const sizeHint = document.getElementById('sizeHint');
+
+// 하단 패널 높이 — 물리 바닥선으로 사용
+const PANEL_H = 90;
 
 startBtn.addEventListener('click', () => { guide.style.display = 'none'; });
 
@@ -378,25 +435,20 @@ async function processQueue() {
   processQueue();
 }
 
-// 베지어 곡선으로 부드러운 윤곽선 그리기
+// 베지어 곡선 윤곽
 function drawSmoothContour(ctx, points) {
   if (points.length < 3) return;
   ctx.beginPath();
-  ctx.moveTo(
-    (points[0].x + points[1].x) / 2,
-    (points[0].y + points[1].y) / 2
-  );
+  ctx.moveTo((points[0].x + points[1].x) / 2, (points[0].y + points[1].y) / 2);
   for (let i = 1; i < points.length - 1; i++) {
-    const mx = (points[i].x + points[i + 1].x) / 2;
-    const my = (points[i].y + points[i + 1].y) / 2;
+    const mx = (points[i].x + points[i+1].x) / 2;
+    const my = (points[i].y + points[i+1].y) / 2;
     ctx.quadraticCurveTo(points[i].x, points[i].y, mx, my);
   }
-  // 마지막 점 → 첫 점으로 닫기
   ctx.quadraticCurveTo(
-    points[points.length - 1].x,
-    points[points.length - 1].y,
-    (points[points.length - 1].x + points[0].x) / 2,
-    (points[points.length - 1].y + points[0].y) / 2
+    points[points.length-1].x, points[points.length-1].y,
+    (points[points.length-1].x + points[0].x) / 2,
+    (points[points.length-1].y + points[0].y) / 2
   );
   ctx.closePath();
 }
@@ -405,7 +457,6 @@ async function detectAndCropFaces(imgEl) {
   const iw = imgEl.naturalWidth || imgEl.width;
   const ih = imgEl.naturalHeight || imgEl.height;
 
-  // 큰 이미지 리사이즈 후 감지
   let detectTarget = imgEl;
   const maxDetectSize = 800;
   let scaleRatio = 1;
@@ -418,38 +469,28 @@ async function detectAndCropFaces(imgEl) {
     detectTarget = rc;
   }
 
-  const options = new faceapi.TinyFaceDetectorOptions({
-    inputSize: 416,
-    scoreThreshold: 0.3
-  });
-
-  const detections = await faceapi
-    .detectAllFaces(detectTarget, options)
-    .withFaceLandmarks(true);
-
+  const options = new faceapi.TinyFaceDetectorOptions({ inputSize: 416, scoreThreshold: 0.3 });
+  const detections = await faceapi.detectAllFaces(detectTarget, options).withFaceLandmarks(true);
   if (!detections || detections.length === 0) return [];
 
   const results = [];
 
   detections.forEach(det => {
-    const allPoints = det.landmarks.positions.map(p => ({
-      x: p.x / scaleRatio,
-      y: p.y / scaleRatio
-    }));
-
+    const allPoints = det.landmarks.positions.map(p => ({ x: p.x / scaleRatio, y: p.y / scaleRatio }));
     const box = det.detection.box;
     const boxH = box.height / scaleRatio;
 
-    // 얼굴 비율 → 화면 크기 매핑 (원래 크기 유지)
+    // 얼굴 크기 아주 약간 증가 (max 0.38)
     const faceRatio = boxH / ih;
-    const minScreenRatio = 0.08;
-    const maxScreenRatio = 0.35;
+    const minScreenRatio = 0.09;
+    const maxScreenRatio = 0.38;
     const clampedRatio = Math.max(0.05, Math.min(0.8, faceRatio));
     const t = (clampedRatio - 0.05) / (0.8 - 0.05);
     const screenRatio = minScreenRatio + t * (maxScreenRatio - minScreenRatio);
-    const targetH_px = canvas.height * screenRatio;
+    // 바닥 패널 제외한 영역 기준
+    const availH = canvas.height - PANEL_H;
+    const targetH_px = availH * screenRatio;
 
-    // 랜드마크 포인트
     const jaw = allPoints.slice(0, 17);
     const leftBrow = allPoints.slice(17, 22);
     const rightBrow = allPoints.slice(22, 27);
@@ -459,22 +500,12 @@ async function detectAndCropFaces(imgEl) {
     const foreheadOffset = (chinY - browTopY) * 0.5;
     const foreheadY = browTopY - foreheadOffset;
 
-    // 윤곽 포인트: 턱선 + 이마 곡선
-    // 왼쪽 턱 끝 → 왼쪽 이마 → 정수리 → 오른쪽 이마 → 오른쪽 턱 끝 → 턱선
     const leftTemple = { x: jaw[0].x - (jaw[2].x - jaw[0].x) * 0.1, y: foreheadY + foreheadOffset * 0.2 };
     const rightTemple = { x: jaw[16].x + (jaw[16].x - jaw[14].x) * 0.1, y: foreheadY + foreheadOffset * 0.2 };
     const topCenter = { x: (jaw[0].x + jaw[16].x) / 2, y: foreheadY };
 
-    const contour = [
-      jaw[0],
-      leftTemple,
-      topCenter,
-      rightTemple,
-      jaw[16],
-      ...jaw.slice(1, 16).reverse()
-    ];
+    const contour = [jaw[0], leftTemple, topCenter, rightTemple, jaw[16], ...jaw.slice(1, 16).reverse()];
 
-    // 바운딩 박스
     let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
     contour.forEach(p => {
       minX = Math.min(minX, p.x); minY = Math.min(minY, p.y);
@@ -488,35 +519,29 @@ async function detectAndCropFaces(imgEl) {
 
     const cropW = maxX - minX;
     const cropH = maxY - minY;
-
     const fc = document.createElement('canvas');
     fc.width = Math.round(cropW);
     fc.height = Math.round(cropH);
     const fctx = fc.getContext('2d');
 
     const localContour = contour.map(p => ({ x: p.x - minX, y: p.y - minY }));
-
-    // 베지어 곡선 클리핑
     fctx.save();
     drawSmoothContour(fctx, localContour);
     fctx.clip();
     fctx.drawImage(imgEl, minX, minY, cropW, cropH, 0, 0, fc.width, fc.height);
     fctx.restore();
 
-    // 외곽 페이드 16px (넓게 → 자연스러운 경계)
     const imgData = fctx.getImageData(0, 0, fc.width, fc.height);
     const d = imgData.data;
     const fadeW = 16;
-
     for (let py = 0; py < fc.height; py++) {
       for (let px = 0; px < fc.width; px++) {
         const idx = (py * fc.width + px) * 4;
         if (d[idx + 3] === 0) continue;
         const edgeDist = Math.min(px, py, fc.width - 1 - px, fc.height - 1 - py);
         if (edgeDist < fadeW) {
-          // 부드러운 감쇠 (선형 대신 ease-in)
-          const t = edgeDist / fadeW;
-          d[idx + 3] = Math.round(d[idx + 3] * t * t);
+          const tt = edgeDist / fadeW;
+          d[idx + 3] = Math.round(d[idx + 3] * tt * tt);
         }
       }
     }
@@ -547,6 +572,23 @@ function updateFaceCounter() {
   faceCounter.textContent = `얼굴 ${objects.length}개`;
 }
 
+// 크기 조절 상태
+let selectedObj = null;
+let resizeStartY = 0;
+let resizeStartW = 0;
+let resizeStartH = 0;
+
+function updateSelectRing(obj) {
+  if (!obj) { selectRing.classList.remove('show'); sizeHint.classList.remove('show'); return; }
+  const r = Math.max(obj.rx, obj.ry);
+  selectRing.style.left = (obj.x - r - 4) + 'px';
+  selectRing.style.top = (obj.y - r - 4) + 'px';
+  selectRing.style.width = (r * 2 + 8) + 'px';
+  selectRing.style.height = (r * 2 + 8) + 'px';
+  selectRing.classList.add('show');
+  sizeHint.classList.add('show');
+}
+
 class FaceObject {
   constructor(img, x, y, w, h) {
     this.img = img;
@@ -563,15 +605,23 @@ class FaceObject {
     this.r = Math.min(this.rx, this.ry);
   }
 
+  setSize(w, h) {
+    this.w = w; this.h = h;
+    this.rx = w * 0.44;
+    this.ry = h * 0.44;
+    this.r = Math.min(this.rx, this.ry);
+  }
+
   update() {
-    if (this.isDragging) return;
+    if (this.isDragging || this === selectedObj) return;
     this.vy += GRAVITY;
     this.vx *= AIR_FRICTION;
     this.x += this.vx; this.y += this.vy;
     this.angle += this.av;
     this.av *= ANGULAR_DAMP;
 
-    const floor = canvas.height - this.ry;
+    // 바닥 = 화면 높이 - 패널 높이
+    const floor = canvas.height - PANEL_H - this.ry;
     if (this.y >= floor) {
       this.y = floor; this.vy *= -BOUNCE;
       this.vx *= FLOOR_FRICTION; this.av *= FLOOR_FRICTION;
@@ -585,6 +635,9 @@ class FaceObject {
     ctx.save();
     ctx.translate(this.x, this.y);
     ctx.rotate(this.angle);
+    if (this === selectedObj) {
+      ctx.globalAlpha = 0.85;
+    }
     ctx.shadowColor = 'rgba(0,0,0,0.7)';
     ctx.shadowBlur = 14;
     ctx.shadowOffsetY = 6;
@@ -604,6 +657,7 @@ function resolveCollisions() {
     for (let i = 0; i < objects.length; i++) {
       for (let j = i + 1; j < objects.length; j++) {
         const a = objects[i], b = objects[j];
+        if (a === selectedObj || b === selectedObj) continue;
         const dx = b.x - a.x, dy = b.y - a.y;
         const distSq = dx*dx + dy*dy;
         const minDist = a.r + b.r;
@@ -625,10 +679,7 @@ function resolveCollisions() {
 
 async function processImage(imgEl) {
   const faces = await detectAndCropFaces(imgEl);
-  if (faces.length === 0) {
-    showToast('😅 얼굴을 찾지 못했어요');
-    return;
-  }
+  if (faces.length === 0) { showToast('😅 얼굴을 찾지 못했어요'); return; }
   faces.forEach(face => {
     const scale = face.targetH / face.cropH;
     const fw = face.cropW * scale;
@@ -686,17 +737,11 @@ switchCamBtn.addEventListener('click', () => {
   facingMode = facingMode === 'environment' ? 'user' : 'environment';
   startCamera();
 });
-
 shootBtn.addEventListener('click', () => {
-  const vw = video.videoWidth;
-  const vh = video.videoHeight;
-  snapCanvas.width = vw;
-  snapCanvas.height = vh;
+  const vw = video.videoWidth, vh = video.videoHeight;
+  snapCanvas.width = vw; snapCanvas.height = vh;
   const sctx = snapCanvas.getContext('2d');
-  if (facingMode === 'user') {
-    sctx.translate(vw, 0);
-    sctx.scale(-1, 1);
-  }
+  if (facingMode === 'user') { sctx.translate(vw, 0); sctx.scale(-1, 1); }
   sctx.drawImage(video, 0, 0);
   const img = new Image();
   img.onload = () => enqueue(img);
@@ -705,9 +750,9 @@ shootBtn.addEventListener('click', () => {
 });
 
 // 흔들기
-shakeBtn.addEventListener('click', () => {
+shakeMainBtn.addEventListener('click', () => {
   objects.forEach(o => {
-    if (!o.isDragging) {
+    if (!o.isDragging && o !== selectedObj) {
       o.vx += (Math.random() - 0.5) * 24;
       o.vy += (Math.random() - 0.75) * 20;
       o.av += (Math.random() - 0.5) * 0.4;
@@ -720,69 +765,120 @@ resetBtn.addEventListener('click', () => confirmModal.classList.add('show'));
 confirmNo.addEventListener('click', () => confirmModal.classList.remove('show'));
 confirmYes.addEventListener('click', () => {
   objects.length = 0;
+  selectedObj = null;
+  updateSelectRing(null);
   updateFaceCounter();
   confirmModal.classList.remove('show');
   showToast('🗑 초기화됐어요');
 });
 
-// 드래그 (마우스)
+// 입력 처리 통합 (마우스 + 터치)
 let dragTarget = null;
-canvas.addEventListener('mousedown', (e) => {
+let longPressTimer = null;
+let isResizing = false;
+let inputStartX = 0, inputStartY = 0;
+let inputMoved = false;
+
+function getPos(e) {
+  if (e.touches) return { x: e.touches[0].clientX, y: e.touches[0].clientY };
+  return { x: e.clientX, y: e.clientY };
+}
+
+function onInputStart(e) {
+  const { x, y } = getPos(e);
+  inputStartX = x; inputStartY = y;
+  inputMoved = false;
+
+  // 패널 영역 클릭은 무시
+  if (y > canvas.height - PANEL_H) return;
+
+  // 선택된 객체가 있고 다른 곳 탭하면 해제
+  if (selectedObj && !selectedObj.hitTest(x, y)) {
+    selectedObj.vx = 0; selectedObj.vy = 0;
+    selectedObj = null;
+    updateSelectRing(null);
+    return;
+  }
+
+  // 선택된 객체 위에서 드래그 → 크기 조절
+  if (selectedObj && selectedObj.hitTest(x, y)) {
+    isResizing = true;
+    resizeStartY = y;
+    resizeStartW = selectedObj.w;
+    resizeStartH = selectedObj.h;
+    return;
+  }
+
+  // 일반 드래그 or 꾹 누르기
   for (let i = objects.length - 1; i >= 0; i--) {
-    if (objects[i].hitTest(e.clientX, e.clientY)) {
+    if (objects[i].hitTest(x, y)) {
       dragTarget = objects[i];
       dragTarget.isDragging = true;
       dragTarget.vx = 0; dragTarget.vy = 0;
-      dragTarget.lastX = e.clientX; dragTarget.lastY = e.clientY;
+      dragTarget.lastX = x; dragTarget.lastY = y;
+
+      // 꾹 누르기 타이머 (0.6초)
+      longPressTimer = setTimeout(() => {
+        if (!inputMoved && dragTarget) {
+          selectedObj = dragTarget;
+          dragTarget.isDragging = false;
+          dragTarget = null;
+          isResizing = true;
+          resizeStartY = y;
+          resizeStartW = selectedObj.w;
+          resizeStartH = selectedObj.h;
+          updateSelectRing(selectedObj);
+          sizeHint.classList.add('show');
+          setTimeout(() => sizeHint.classList.remove('show'), 1800);
+        }
+      }, 600);
       break;
     }
   }
-});
-canvas.addEventListener('mousemove', (e) => {
-  if (!dragTarget) return;
-  dragTarget.vx = e.clientX - dragTarget.lastX;
-  dragTarget.vy = e.clientY - dragTarget.lastY;
-  dragTarget.x = e.clientX; dragTarget.y = e.clientY;
-  dragTarget.lastX = e.clientX; dragTarget.lastY = e.clientY;
-});
-canvas.addEventListener('mouseup', () => {
-  if (dragTarget) { dragTarget.isDragging = false; dragTarget = null; }
-});
+}
 
-// 드래그 (터치)
-canvas.addEventListener('touchstart', (e) => {
-  e.preventDefault();
-  const t = e.touches[0];
-  for (let i = objects.length - 1; i >= 0; i--) {
-    if (objects[i].hitTest(t.clientX, t.clientY)) {
-      dragTarget = objects[i];
-      dragTarget.isDragging = true;
-      dragTarget.vx = 0; dragTarget.vy = 0;
-      dragTarget.lastX = t.clientX; dragTarget.lastY = t.clientY;
-      break;
-    }
+function onInputMove(e) {
+  if (e.cancelable) e.preventDefault();
+  const { x, y } = getPos(e);
+  const dx = Math.abs(x - inputStartX) + Math.abs(y - inputStartY);
+  if (dx > 8) inputMoved = true;
+
+  if (isResizing && selectedObj) {
+    const dy = y - resizeStartY;
+    const scale = 1 - dy / 200;
+    const newH = Math.max(40, Math.min(canvas.height * 0.6, resizeStartH * scale));
+    const newW = resizeStartW * (newH / resizeStartH);
+    selectedObj.setSize(newW, newH);
+    updateSelectRing(selectedObj);
+    return;
   }
-}, { passive: false });
 
-canvas.addEventListener('touchmove', (e) => {
-  e.preventDefault();
   if (!dragTarget) return;
-  const t = e.touches[0];
-  dragTarget.vx = t.clientX - dragTarget.lastX;
-  dragTarget.vy = t.clientY - dragTarget.lastY;
-  dragTarget.x = t.clientX; dragTarget.y = t.clientY;
-  dragTarget.lastX = t.clientX; dragTarget.lastY = t.clientY;
-}, { passive: false });
+  dragTarget.vx = x - dragTarget.lastX;
+  dragTarget.vy = y - dragTarget.lastY;
+  dragTarget.x = x; dragTarget.y = y;
+  dragTarget.lastX = x; dragTarget.lastY = y;
+}
 
-canvas.addEventListener('touchend', () => {
+function onInputEnd() {
+  if (longPressTimer) { clearTimeout(longPressTimer); longPressTimer = null; }
+  isResizing = false;
   if (dragTarget) { dragTarget.isDragging = false; dragTarget = null; }
-});
+}
+
+canvas.addEventListener('mousedown', onInputStart);
+canvas.addEventListener('mousemove', onInputMove);
+canvas.addEventListener('mouseup', onInputEnd);
+canvas.addEventListener('touchstart', onInputStart, { passive: false });
+canvas.addEventListener('touchmove', onInputMove, { passive: false });
+canvas.addEventListener('touchend', onInputEnd);
 
 // 게임 루프
 function loop() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   resolveCollisions();
   objects.forEach(o => { o.update(); o.draw(); });
+  if (selectedObj) updateSelectRing(selectedObj);
   requestAnimationFrame(loop);
 }
 loop();
