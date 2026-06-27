@@ -19,10 +19,8 @@
     #canvas { display: block; background: #000; }
     #topUI {
       position: fixed;
-      top: 20px;
-      right: 16px;
-      display: flex;
-      gap: 8px;
+      top: 20px; right: 16px;
+      display: flex; gap: 8px;
       z-index: 10;
     }
     .btnSm {
@@ -30,8 +28,7 @@
       color: rgba(255,255,255,0.7);
       border: 1px solid rgba(255,255,255,0.2);
       border-radius: 50px;
-      padding: 8px 14px;
-      font-size: 12px;
+      padding: 8px 14px; font-size: 12px;
       cursor: pointer;
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
@@ -48,8 +45,7 @@
       -webkit-backdrop-filter: blur(20px);
       z-index: 10;
       display: flex;
-      align-items: center;
-      justify-content: center;
+      align-items: center; justify-content: center;
       gap: 16px;
       padding-bottom: env(safe-area-inset-bottom);
     }
@@ -58,15 +54,10 @@
       color: #fff;
       border: 1px solid rgba(255,255,255,0.2);
       border-radius: 50px;
-      padding: 13px 28px;
-      font-size: 14px;
-      font-weight: 500;
-      cursor: pointer;
-      white-space: nowrap;
+      padding: 13px 28px; font-size: 14px; font-weight: 500;
+      cursor: pointer; white-space: nowrap;
       transition: background 0.12s, transform 0.08s;
-      display: flex;
-      align-items: center;
-      gap: 7px;
+      display: flex; align-items: center; gap: 7px;
     }
     .btnMain:active { background: rgba(255,255,255,0.25); transform: scale(0.96); }
     .btnMain:disabled { opacity: 0.3; pointer-events: none; }
@@ -78,14 +69,12 @@
     #shakeMainBtn:active { background: rgba(255,100,50,0.4); }
     #modelStatus {
       position: fixed;
-      bottom: 100px;
-      left: 50%;
+      bottom: 100px; left: 50%;
       transform: translateX(-50%);
       background: rgba(0,0,0,0.65);
       color: rgba(255,255,255,0.5);
       border-radius: 50px;
-      padding: 6px 16px;
-      font-size: 11px;
+      padding: 6px 16px; font-size: 11px;
       z-index: 300;
       backdrop-filter: blur(8px);
       transition: opacity 0.8s;
@@ -99,100 +88,59 @@
       background: rgba(255,255,255,0.12);
       color: rgba(255,255,255,0.6);
       border-radius: 50px;
-      padding: 7px 13px;
-      font-size: 11px;
+      padding: 7px 13px; font-size: 11px;
       z-index: 300;
     }
     #queueBadge.show { display: block; }
     #toast {
       display: none;
       position: fixed;
-      bottom: 105px;
-      left: 50%;
+      bottom: 105px; left: 50%;
       transform: translateX(-50%);
       background: rgba(30,30,30,0.9);
-      color: #fff;
-      border-radius: 50px;
-      padding: 11px 22px;
-      font-size: 13px;
-      z-index: 300;
-      white-space: nowrap;
+      color: #fff; border-radius: 50px;
+      padding: 11px 22px; font-size: 13px;
+      z-index: 300; white-space: nowrap;
       backdrop-filter: blur(8px);
     }
     #toast.show { display: block; }
-    #selectRing {
-      display: none;
-      position: fixed;
-      border: 2px solid rgba(255,255,255,0.8);
-      border-radius: 50%;
-      pointer-events: none;
-      z-index: 20;
-      box-shadow: 0 0 12px rgba(255,255,255,0.3);
-    }
-    #selectRing.show { display: block; }
-    #sizeHint {
-      display: none;
-      position: fixed;
-      top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      color: rgba(255,255,255,0.5);
-      font-size: 12px;
-      pointer-events: none;
-      z-index: 21;
-      text-align: center;
-    }
-    #sizeHint.show { display: block; }
     #faceCounter {
       position: fixed;
       bottom: 96px; left: 12px;
       color: rgba(255,255,255,0.2);
-      font-size: 10px;
-      pointer-events: none;
-      z-index: 5;
+      font-size: 10px; pointer-events: none; z-index: 5;
     }
     #version {
       position: fixed;
       bottom: 96px; right: 12px;
       color: rgba(255,255,255,0.2);
-      font-size: 10px;
-      pointer-events: none;
-      z-index: 5;
+      font-size: 10px; pointer-events: none; z-index: 5;
     }
     #guide {
-      position: fixed;
-      inset: 0;
-      background: #000;
-      z-index: 50;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 22px;
-      color: #fff;
-      padding: 40px;
+      position: fixed; inset: 0;
+      background: #000; z-index: 50;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 22px; color: #fff; padding: 40px;
     }
     #guide h1 { font-size: 26px; font-weight: 700; text-align: center; }
     #guide .sub { font-size: 14px; color: rgba(255,255,255,0.5); text-align: center; line-height: 1.8; }
     #startBtn {
-      background: #fff; color: #000;
-      border: none; border-radius: 60px;
-      padding: 16px 48px; font-size: 16px; font-weight: 600;
-      cursor: pointer; margin-top: 8px;
+      background: #fff; color: #000; border: none;
+      border-radius: 60px; padding: 16px 48px;
+      font-size: 16px; font-weight: 600; cursor: pointer; margin-top: 8px;
     }
     #startBtn:active { opacity: 0.8; }
     #confirmModal {
-      display: none;
-      position: fixed; inset: 0;
-      background: rgba(0,0,0,0.7);
-      z-index: 400;
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.7); z-index: 400;
       align-items: center; justify-content: center;
     }
     #confirmModal.show { display: flex; }
     #confirmBox {
       background: #1a1a1a;
       border: 1px solid rgba(255,255,255,0.15);
-      border-radius: 20px;
-      padding: 28px 32px;
+      border-radius: 20px; padding: 28px 32px;
       text-align: center; color: #fff;
       max-width: 280px; width: 90%;
     }
@@ -202,8 +150,7 @@
     #confirmYes { background: #ff4444; color: #fff; }
     #confirmNo { background: rgba(255,255,255,0.12); color: #fff; }
     #cameraModal {
-      display: none;
-      position: fixed; inset: 0;
+      display: none; position: fixed; inset: 0;
       background: #000; z-index: 100;
       flex-direction: column; align-items: center; justify-content: center;
     }
@@ -232,18 +179,16 @@
 
 <div id="guide">
   <h1>😄 Face Drop</h1>
-  <p class="sub">친구, 가족, 반려동물 사진을 넣어봐요<br>얼굴이 하늘에서 떨어져요</p>
+  <p class="sub">친구나 가족 사진을 넣어봐요<br>얼굴이 하늘에서 떨어져요</p>
   <button id="startBtn">시작하기</button>
 </div>
 
 <canvas id="canvas"></canvas>
-<div id="version">v1.1</div>
+<div id="version">v1.2</div>
 <div id="faceCounter"></div>
 <div id="modelStatus">⏳ 모델 로딩 중...</div>
 <div id="queueBadge"></div>
 <div id="toast"></div>
-<div id="selectRing"></div>
-<div id="sizeHint">위아래로 드래그해서<br>크기를 조절하세요</div>
 
 <div id="topUI">
   <button class="btnSm" id="resetBtn">🗑 초기화</button>
@@ -276,11 +221,7 @@
   </div>
 </div>
 
-<!-- face-api.js: 사람 얼굴 -->
 <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
-<!-- TensorFlow.js + COCO-SSD: 동물 감지 -->
-<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.2.0/dist/tf.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd@2.2.2/dist/coco-ssd.min.js"></script>
 
 <script>
 const canvas = document.getElementById('canvas');
@@ -305,12 +246,8 @@ const faceCounter = document.getElementById('faceCounter');
 const confirmModal = document.getElementById('confirmModal');
 const confirmYes = document.getElementById('confirmYes');
 const confirmNo = document.getElementById('confirmNo');
-const selectRing = document.getElementById('selectRing');
-const sizeHint = document.getElementById('sizeHint');
 
 const PANEL_H = 90;
-// COCO-SSD에서 감지할 동물 클래스
-const ANIMAL_CLASSES = ['cat', 'dog'];
 
 startBtn.addEventListener('click', () => { guide.style.display = 'none'; });
 
@@ -327,34 +264,24 @@ function showToast(msg, color = 'rgba(30,30,30,0.9)') {
   toastEl.style.background = color;
   toastEl.classList.add('show');
   if (toastTimer) clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => toastEl.classList.remove('show'), 2800);
+  toastTimer = setTimeout(() => toastEl.classList.remove('show'), 2500);
 }
 
 // 모델 로딩
 const MODEL_URL = '/photo-drop-game';
-let faceModelsLoaded = false;
-let cocoModel = null;
-let allModelsReady = false;
+let modelsLoaded = false;
 
 async function loadModels() {
   try {
-    modelStatus.textContent = '⏳ 얼굴 모델 로딩 중...';
     await Promise.all([
       faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL),
       faceapi.nets.faceLandmark68TinyNet.loadFromUri(MODEL_URL),
     ]);
-    faceModelsLoaded = true;
-
-    // 버튼 먼저 활성화 (얼굴 감지는 바로 가능)
-    uploadBtn.disabled = false;
-    cameraBtn.disabled = false;
-
-    modelStatus.textContent = '⏳ 동물 모델 로딩 중...';
-    cocoModel = await cocoSsd.load({ base: 'lite_mobilenet_v2' });
-    allModelsReady = true;
-
+    modelsLoaded = true;
     modelStatus.style.opacity = '0';
     setTimeout(() => { modelStatus.style.display = 'none'; }, 800);
+    uploadBtn.disabled = false;
+    cameraBtn.disabled = false;
   } catch(e) {
     modelStatus.textContent = '❌ 새로고침해주세요';
   }
@@ -403,9 +330,9 @@ function drawSmoothContour(c, points) {
   c.closePath();
 }
 
-// 사람 얼굴 감지 + 윤곽 크롭
-async function detectHumanFaces(imgEl) {
-  if (!faceModelsLoaded) return [];
+// 얼굴 감지 + 윤곽 크롭
+async function detectAndCropFaces(imgEl) {
+  if (!modelsLoaded) return [];
   const iw = imgEl.naturalWidth || imgEl.width;
   const ih = imgEl.naturalHeight || imgEl.height;
 
@@ -444,6 +371,7 @@ async function detectHumanFaces(imgEl) {
     const chinY = Math.max(...jaw.map(p => p.y));
     const fhOffset = (chinY - browTopY) * 0.5;
     const foreheadY = browTopY - fhOffset;
+
     const contour = [
       jaw[0],
       { x: jaw[0].x - (jaw[2].x - jaw[0].x) * 0.1, y: foreheadY + fhOffset * 0.2 },
@@ -468,13 +396,13 @@ async function detectHumanFaces(imgEl) {
     fc.width = Math.round(cropW); fc.height = Math.round(cropH);
     const fctx = fc.getContext('2d');
     const lc = contour.map(p => ({ x: p.x - minX, y: p.y - minY }));
+
     fctx.save();
     drawSmoothContour(fctx, lc);
     fctx.clip();
     fctx.drawImage(imgEl, minX, minY, cropW, cropH, 0, 0, fc.width, fc.height);
     fctx.restore();
 
-    // 경계 페이드
     const id = fctx.getImageData(0, 0, fc.width, fc.height);
     const d = id.data;
     const fw = 16;
@@ -490,69 +418,7 @@ async function detectHumanFaces(imgEl) {
 
     const img = new Image();
     img.src = fc.toDataURL('image/png');
-    results.push({ img, cropW, cropH, targetH, type: 'human' });
-  });
-
-  await Promise.all(results.map(r => new Promise(res => {
-    if (r.img.complete) res(); else r.img.onload = res;
-  })));
-  return results;
-}
-
-// 동물 감지 + 크롭 (배경 포함, 페이드 처리)
-async function detectAnimals(imgEl) {
-  if (!cocoModel) return [];
-  const iw = imgEl.naturalWidth || imgEl.width;
-  const ih = imgEl.naturalHeight || imgEl.height;
-  const availH = canvas.height - PANEL_H;
-
-  let predictions;
-  try {
-    predictions = await cocoModel.detect(imgEl);
-  } catch(e) { return []; }
-
-  const animals = predictions.filter(p => ANIMAL_CLASSES.includes(p.class) && p.score > 0.5);
-  if (animals.length === 0) return [];
-
-  const results = [];
-
-  animals.forEach(animal => {
-    let [bx, by, bw, bh] = animal.bbox;
-
-    // 여백 15% 추가
-    const padX = bw * 0.15;
-    const padY = bh * 0.15;
-    bx = Math.max(0, bx - padX);
-    by = Math.max(0, by - padY);
-    bw = Math.min(iw - bx, bw + padX * 2);
-    bh = Math.min(ih - by, bh + padY * 2);
-
-    // 크기 매핑
-    const animalRatio = bh / ih;
-    const t = (Math.max(0.05, Math.min(0.8, animalRatio)) - 0.05) / 0.75;
-    const targetH = availH * (0.1 + t * 0.32);
-
-    const fc = document.createElement('canvas');
-    fc.width = Math.round(bw); fc.height = Math.round(bh);
-    const fctx = fc.getContext('2d');
-    fctx.drawImage(imgEl, bx, by, bw, bh, 0, 0, fc.width, fc.height);
-
-    // 외곽 페이드 (동물은 더 넓게)
-    const id = fctx.getImageData(0, 0, fc.width, fc.height);
-    const d = id.data;
-    const fw = 24;
-    for (let py = 0; py < fc.height; py++) {
-      for (let px = 0; px < fc.width; px++) {
-        const idx = (py * fc.width + px) * 4;
-        const ed = Math.min(px, py, fc.width-1-px, fc.height-1-py);
-        if (ed < fw) { const tt = ed/fw; d[idx+3] = Math.round(d[idx+3]*tt*tt); }
-      }
-    }
-    fctx.putImageData(id, 0, 0);
-
-    const img = new Image();
-    img.src = fc.toDataURL('image/png');
-    results.push({ img, cropW: bw, cropH: bh, targetH, type: animal.class });
+    results.push({ img, cropW, cropH, targetH });
   });
 
   await Promise.all(results.map(r => new Promise(res => {
@@ -600,7 +466,7 @@ function drawIllustFace(config, size) {
     [-1,0,1].forEach(i => { c.beginPath(); c.arc(cx+i*r*0.35, cy-r*0.72, r*0.22, 0, Math.PI*2); c.fill(); });
   }
 
-  c.strokeStyle=config.hair; c.lineWidth=size*0.025; c.lineCap='round';
+  c.strokeStyle = config.hair; c.lineWidth = size*0.025; c.lineCap = 'round';
   [-1,1].forEach(s => {
     c.beginPath(); c.moveTo(cx+s*r*0.52, cy-r*0.28);
     c.quadraticCurveTo(cx+s*r*0.32, cy-r*0.38, cx+s*r*0.12, cy-r*0.3); c.stroke();
@@ -654,22 +520,12 @@ function drawIllustFace(config, size) {
 }
 
 // 물리
-const GRAVITY = 0.52, FLOOR_FRICTION = 0.72, BOUNCE = 0.28, AIR_FRICTION = 0.996, ANGULAR_DAMP = 0.83;
+const GRAVITY=0.52, FLOOR_FRICTION=0.72, BOUNCE=0.28, AIR_FRICTION=0.996, ANGULAR_DAMP=0.83;
 const objects = [];
 
 function updateFaceCounter() {
   const real = objects.filter(o => !o.isDemo).length;
-  faceCounter.textContent = real > 0 ? `${real}개` : '';
-}
-
-let selectedObj = null, resizeStartY = 0, resizeStartW = 0, resizeStartH = 0;
-
-function updateSelectRing(obj) {
-  if (!obj) { selectRing.classList.remove('show'); sizeHint.classList.remove('show'); return; }
-  const r = Math.max(obj.rx, obj.ry);
-  selectRing.style.left = (obj.x-r-4)+'px'; selectRing.style.top = (obj.y-r-4)+'px';
-  selectRing.style.width = (r*2+8)+'px'; selectRing.style.height = (r*2+8)+'px';
-  selectRing.classList.add('show');
+  faceCounter.textContent = real > 0 ? `얼굴 ${real}개` : '';
 }
 
 class DropObject {
@@ -681,25 +537,24 @@ class DropObject {
     this.rx=w*0.44; this.ry=h*0.44; this.r=Math.min(this.rx,this.ry);
     this.alpha=isDemo?0:1;
   }
-  setSize(w,h){ this.w=w; this.h=h; this.rx=w*0.44; this.ry=h*0.44; this.r=Math.min(this.rx,this.ry); }
-  update(){
-    if(this.isDragging||this===selectedObj) return;
-    if(this.isDemo&&this.alpha<1) this.alpha=Math.min(1,this.alpha+0.02);
+  update() {
+    if (this.isDragging) return;
+    if (this.isDemo && this.alpha < 1) this.alpha = Math.min(1, this.alpha+0.02);
     this.vy+=GRAVITY; this.vx*=AIR_FRICTION;
     this.x+=this.vx; this.y+=this.vy;
     this.angle+=this.av; this.av*=ANGULAR_DAMP;
-    const floor=canvas.height-PANEL_H-this.ry;
-    if(this.y>=floor){ this.y=floor; this.vy*=-BOUNCE; this.vx*=FLOOR_FRICTION; this.av*=FLOOR_FRICTION; if(Math.abs(this.vy)<1) this.vy=0; }
-    if(this.x-this.rx<=0){ this.x=this.rx; this.vx=Math.abs(this.vx)*BOUNCE; this.av*=-0.4; }
-    if(this.x+this.rx>=canvas.width){ this.x=canvas.width-this.rx; this.vx=-Math.abs(this.vx)*BOUNCE; this.av*=-0.4; }
+    const floor = canvas.height-PANEL_H-this.ry;
+    if (this.y>=floor) { this.y=floor; this.vy*=-BOUNCE; this.vx*=FLOOR_FRICTION; this.av*=FLOOR_FRICTION; if(Math.abs(this.vy)<1) this.vy=0; }
+    if (this.x-this.rx<=0) { this.x=this.rx; this.vx=Math.abs(this.vx)*BOUNCE; this.av*=-0.4; }
+    if (this.x+this.rx>=canvas.width) { this.x=canvas.width-this.rx; this.vx=-Math.abs(this.vx)*BOUNCE; this.av*=-0.4; }
   }
-  draw(){
-    ctx.save(); ctx.globalAlpha=this===selectedObj?0.85:this.alpha;
+  draw() {
+    ctx.save(); ctx.globalAlpha=this.alpha;
     ctx.translate(this.x,this.y); ctx.rotate(this.angle);
     ctx.shadowColor='rgba(0,0,0,0.7)'; ctx.shadowBlur=14; ctx.shadowOffsetY=6;
     ctx.drawImage(this.img,-this.w/2,-this.h/2,this.w,this.h); ctx.restore();
   }
-  hitTest(px,py){ const dx=(px-this.x)/this.rx, dy=(py-this.y)/this.ry; return dx*dx+dy*dy<=1; }
+  hitTest(px,py) { const dx=(px-this.x)/this.rx, dy=(py-this.y)/this.ry; return dx*dx+dy*dy<=1; }
 }
 
 function spawnDemoFaces() {
@@ -719,13 +574,12 @@ function spawnDemoFaces() {
 }
 
 function resolveCollisions() {
-  for(let iter=0;iter<3;iter++){
-    for(let i=0;i<objects.length;i++){
-      for(let j=i+1;j<objects.length;j++){
+  for (let iter=0; iter<3; iter++) {
+    for (let i=0; i<objects.length; i++) {
+      for (let j=i+1; j<objects.length; j++) {
         const a=objects[i], b=objects[j];
-        if(a===selectedObj||b===selectedObj) continue;
         const dx=b.x-a.x, dy=b.y-a.y, distSq=dx*dx+dy*dy, minDist=a.r+b.r;
-        if(distSq>=minDist*minDist||distSq<0.01) continue;
+        if (distSq>=minDist*minDist||distSq<0.01) continue;
         const dist=Math.sqrt(distSq), nx=dx/dist, ny=dy/dist, ov=(minDist-dist)*0.5;
         if(!a.isDragging){a.x-=nx*ov;a.y-=ny*ov;} if(!b.isDragging){b.x+=nx*ov;b.y+=ny*ov;}
         const dot=(a.vx-b.vx)*nx+(a.vy-b.vy)*ny; if(dot<=0) continue;
@@ -738,48 +592,28 @@ function resolveCollisions() {
 }
 
 async function processImage(imgEl) {
-  // 데모 제거
   if (objects.some(o => o.isDemo)) {
     const keep = objects.filter(o => !o.isDemo);
     objects.length = 0;
     keep.forEach(o => objects.push(o));
   }
 
-  // 1. 사람 얼굴 먼저
-  let results = await detectHumanFaces(imgEl);
-
-  // 2. 사람 없으면 동물 감지
-  if (results.length === 0 && cocoModel) {
-    results = await detectAnimals(imgEl);
-  }
-
-  if (results.length === 0) {
-    showToast('얼굴이나 동물을 찾지 못했어요 😅');
+  const faces = await detectAndCropFaces(imgEl);
+  if (faces.length === 0) {
+    showToast('얼굴이 안 보여요! 더 가까이 찍은 사진을 써봐요 😅');
     return;
   }
 
-  const availH = canvas.height - PANEL_H;
-  results.forEach(r => {
-    const scale = r.targetH / r.cropH;
-    const fw = r.cropW * scale;
-    const fh = r.targetH;
+  faces.forEach(face => {
+    const scale = face.targetH / face.cropH;
+    const fw = face.cropW * scale;
+    const fh = face.targetH;
     const x = fw/2 + Math.random()*(canvas.width-fw);
-    objects.push(new DropObject(r.img, x, -fh, fw, fh, false));
+    objects.push(new DropObject(face.img, x, -fh, fw, fh, false));
   });
 
   updateFaceCounter();
-
-  const humans = results.filter(r => r.type === 'human').length;
-  const animals = results.filter(r => r.type !== 'human').length;
-
-  if (humans > 0 && animals === 0) {
-    if (humans > 1) showToast(`얼굴 ${humans}개 발견! 😊`, 'rgba(40,140,70,0.9)');
-  } else if (animals > 0 && humans === 0) {
-    const label = results.find(r => r.type !== 'human')?.type === 'cat' ? '고양이' : '강아지';
-    showToast(`${label} 발견! 🐾`, 'rgba(40,140,70,0.9)');
-  } else if (humans > 0 && animals > 0) {
-    showToast(`얼굴 ${humans}개 + 동물 ${animals}마리! 🎉`, 'rgba(40,140,70,0.9)');
-  }
+  if (faces.length > 1) showToast(`얼굴 ${faces.length}개 발견! 😊`, 'rgba(40,140,70,0.9)');
 }
 
 // 갤러리
@@ -829,8 +663,10 @@ shootBtn.addEventListener('click', () => {
 
 shakeMainBtn.addEventListener('click', () => {
   objects.forEach(o => {
-    if(!o.isDragging&&o!==selectedObj){
-      o.vx+=(Math.random()-0.5)*24; o.vy+=(Math.random()-0.75)*20; o.av+=(Math.random()-0.5)*0.4;
+    if(!o.isDragging){
+      o.vx+=(Math.random()-0.5)*24;
+      o.vy+=(Math.random()-0.75)*20;
+      o.av+=(Math.random()-0.5)*0.4;
     }
   });
 });
@@ -838,72 +674,48 @@ shakeMainBtn.addEventListener('click', () => {
 resetBtn.addEventListener('click', () => confirmModal.classList.add('show'));
 confirmNo.addEventListener('click', () => confirmModal.classList.remove('show'));
 confirmYes.addEventListener('click', () => {
-  objects.length=0; selectedObj=null; updateSelectRing(null); updateFaceCounter();
-  confirmModal.classList.remove('show'); showToast('초기화됐어요 🗑');
+  objects.length=0; updateFaceCounter();
+  confirmModal.classList.remove('show');
+  showToast('초기화됐어요 🗑');
   setTimeout(spawnDemoFaces, 300);
 });
 
-// 입력
-let dragTarget=null, longPressTimer=null, isResizing=false;
-let inputStartX=0, inputStartY=0, inputMoved=false;
-
+// 드래그
+let dragTarget = null;
 function getPos(e){ if(e.touches) return{x:e.touches[0].clientX,y:e.touches[0].clientY}; return{x:e.clientX,y:e.clientY}; }
 
-function onInputStart(e) {
-  const {x,y}=getPos(e); inputStartX=x; inputStartY=y; inputMoved=false;
+function onStart(e) {
+  const {x,y}=getPos(e);
   if(y>canvas.height-PANEL_H) return;
-  if(selectedObj&&!selectedObj.hitTest(x,y)){ selectedObj.vx=0;selectedObj.vy=0;selectedObj=null;updateSelectRing(null);return; }
-  if(selectedObj&&selectedObj.hitTest(x,y)){ isResizing=true;resizeStartY=y;resizeStartW=selectedObj.w;resizeStartH=selectedObj.h;return; }
   for(let i=objects.length-1;i>=0;i--){
     if(objects[i].hitTest(x,y)){
-      dragTarget=objects[i]; dragTarget.isDragging=true; dragTarget.vx=0;dragTarget.vy=0;
-      dragTarget.lastX=x;dragTarget.lastY=y;
-      longPressTimer=setTimeout(()=>{
-        if(!inputMoved&&dragTarget){
-          selectedObj=dragTarget; dragTarget.isDragging=false; dragTarget=null;
-          isResizing=true;resizeStartY=y;resizeStartW=selectedObj.w;resizeStartH=selectedObj.h;
-          updateSelectRing(selectedObj);sizeHint.classList.add('show');
-          setTimeout(()=>sizeHint.classList.remove('show'),1800);
-        }
-      },600);
-      break;
+      dragTarget=objects[i]; dragTarget.isDragging=true;
+      dragTarget.vx=0; dragTarget.vy=0;
+      dragTarget.lastX=x; dragTarget.lastY=y; break;
     }
   }
 }
-
-function onInputMove(e) {
+function onMove(e) {
   if(e.cancelable) e.preventDefault();
-  const {x,y}=getPos(e);
-  if(Math.abs(x-inputStartX)+Math.abs(y-inputStartY)>8) inputMoved=true;
-  if(isResizing&&selectedObj){
-    const dy=y-resizeStartY, scale=1-dy/200;
-    const newH=Math.max(40,Math.min(canvas.height*0.6,resizeStartH*scale));
-    selectedObj.setSize(resizeStartW*(newH/resizeStartH),newH);
-    updateSelectRing(selectedObj); return;
-  }
   if(!dragTarget) return;
+  const {x,y}=getPos(e);
   dragTarget.vx=x-dragTarget.lastX; dragTarget.vy=y-dragTarget.lastY;
-  dragTarget.x=x; dragTarget.y=y; dragTarget.lastX=x; dragTarget.lastY=y;
+  dragTarget.x=x; dragTarget.y=y;
+  dragTarget.lastX=x; dragTarget.lastY=y;
 }
+function onEnd() { if(dragTarget){dragTarget.isDragging=false;dragTarget=null;} }
 
-function onInputEnd() {
-  if(longPressTimer){clearTimeout(longPressTimer);longPressTimer=null;}
-  isResizing=false;
-  if(dragTarget){dragTarget.isDragging=false;dragTarget=null;}
-}
-
-canvas.addEventListener('mousedown', onInputStart);
-canvas.addEventListener('mousemove', onInputMove);
-canvas.addEventListener('mouseup', onInputEnd);
-canvas.addEventListener('touchstart', onInputStart, {passive:false});
-canvas.addEventListener('touchmove', onInputMove, {passive:false});
-canvas.addEventListener('touchend', onInputEnd);
+canvas.addEventListener('mousedown', onStart);
+canvas.addEventListener('mousemove', onMove);
+canvas.addEventListener('mouseup', onEnd);
+canvas.addEventListener('touchstart', onStart, {passive:false});
+canvas.addEventListener('touchmove', onMove, {passive:false});
+canvas.addEventListener('touchend', onEnd);
 
 function loop() {
   ctx.clearRect(0,0,canvas.width,canvas.height);
   resolveCollisions();
   objects.forEach(o=>{o.update();o.draw();});
-  if(selectedObj) updateSelectRing(selectedObj);
   requestAnimationFrame(loop);
 }
 loop();
