@@ -40,9 +40,7 @@
     .btnSm:active { background: rgba(255,255,255,0.25); }
     #bottomPanel {
       position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
+      bottom: 0; left: 0; right: 0;
       height: 90px;
       background: rgba(10,10,10,0.92);
       border-top: 1px solid rgba(255,255,255,0.12);
@@ -78,8 +76,6 @@
       color: #ff9966;
     }
     #shakeMainBtn:active { background: rgba(255,100,50,0.4); }
-
-    /* 모델 로딩 — 하단 패널 위에 */
     #modelStatus {
       position: fixed;
       bottom: 100px;
@@ -96,12 +92,10 @@
       white-space: nowrap;
       pointer-events: none;
     }
-
     #queueBadge {
       display: none;
       position: fixed;
-      top: 20px;
-      left: 16px;
+      top: 20px; left: 16px;
       background: rgba(255,255,255,0.12);
       color: rgba(255,255,255,0.6);
       border-radius: 50px;
@@ -110,7 +104,6 @@
       z-index: 300;
     }
     #queueBadge.show { display: block; }
-
     #toast {
       display: none;
       position: fixed;
@@ -127,7 +120,6 @@
       backdrop-filter: blur(8px);
     }
     #toast.show { display: block; }
-
     #selectRing {
       display: none;
       position: fixed;
@@ -141,8 +133,7 @@
     #sizeHint {
       display: none;
       position: fixed;
-      top: 50%;
-      left: 50%;
+      top: 50%; left: 50%;
       transform: translate(-50%, -50%);
       color: rgba(255,255,255,0.5);
       font-size: 12px;
@@ -151,11 +142,9 @@
       text-align: center;
     }
     #sizeHint.show { display: block; }
-
     #faceCounter {
       position: fixed;
-      bottom: 96px;
-      left: 12px;
+      bottom: 96px; left: 12px;
       color: rgba(255,255,255,0.2);
       font-size: 10px;
       pointer-events: none;
@@ -163,15 +152,12 @@
     }
     #version {
       position: fixed;
-      bottom: 96px;
-      right: 12px;
+      bottom: 96px; right: 12px;
       color: rgba(255,255,255,0.2);
       font-size: 10px;
       pointer-events: none;
       z-index: 5;
     }
-
-    /* 안내 화면 */
     #guide {
       position: fixed;
       inset: 0;
@@ -185,29 +171,21 @@
       color: #fff;
       padding: 40px;
     }
-    #guide h1 { font-size: 26px; font-weight: 700; text-align: center; letter-spacing: -0.5px; }
-    #guide .sub { font-size: 14px; color: rgba(255,255,255,0.5); text-align: center; line-height: 1.7; }
+    #guide h1 { font-size: 26px; font-weight: 700; text-align: center; }
+    #guide .sub { font-size: 14px; color: rgba(255,255,255,0.5); text-align: center; line-height: 1.8; }
     #startBtn {
-      background: #fff;
-      color: #000;
-      border: none;
-      border-radius: 60px;
-      padding: 16px 48px;
-      font-size: 16px;
-      font-weight: 600;
-      cursor: pointer;
-      margin-top: 8px;
+      background: #fff; color: #000;
+      border: none; border-radius: 60px;
+      padding: 16px 48px; font-size: 16px; font-weight: 600;
+      cursor: pointer; margin-top: 8px;
     }
     #startBtn:active { opacity: 0.8; }
-
     #confirmModal {
       display: none;
-      position: fixed;
-      inset: 0;
+      position: fixed; inset: 0;
       background: rgba(0,0,0,0.7);
       z-index: 400;
-      align-items: center;
-      justify-content: center;
+      align-items: center; justify-content: center;
     }
     #confirmModal.show { display: flex; }
     #confirmBox {
@@ -215,55 +193,37 @@
       border: 1px solid rgba(255,255,255,0.15);
       border-radius: 20px;
       padding: 28px 32px;
-      text-align: center;
-      color: #fff;
-      max-width: 280px;
-      width: 90%;
+      text-align: center; color: #fff;
+      max-width: 280px; width: 90%;
     }
     #confirmBox p { font-size: 15px; margin-bottom: 20px; color: rgba(255,255,255,0.8); }
     #confirmBox .confirmBtns { display: flex; gap: 10px; justify-content: center; }
     #confirmBox button { border-radius: 50px; padding: 11px 24px; font-size: 14px; cursor: pointer; border: none; }
     #confirmYes { background: #ff4444; color: #fff; }
     #confirmNo { background: rgba(255,255,255,0.12); color: #fff; }
-
     #cameraModal {
       display: none;
-      position: fixed;
-      inset: 0;
-      background: #000;
-      z-index: 100;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
+      position: fixed; inset: 0;
+      background: #000; z-index: 100;
+      flex-direction: column; align-items: center; justify-content: center;
     }
     #cameraModal.open { display: flex; }
     #video { width: 100%; max-height: 75vh; object-fit: cover; }
     #video.mirrored { transform: scaleX(-1); }
     #camControls {
-      position: fixed;
-      bottom: 30px;
-      left: 50%;
+      position: fixed; bottom: 30px; left: 50%;
       transform: translateX(-50%);
-      display: flex;
-      gap: 20px;
-      align-items: center;
+      display: flex; gap: 20px; align-items: center;
     }
     #shootBtn {
-      width: 72px; height: 72px;
-      border-radius: 50%;
-      border: 4px solid #fff;
-      background: rgba(255,255,255,0.2);
-      cursor: pointer;
+      width: 72px; height: 72px; border-radius: 50%;
+      border: 4px solid #fff; background: rgba(255,255,255,0.2); cursor: pointer;
     }
     #shootBtn:active { background: rgba(255,255,255,0.6); }
     #closeCamBtn {
-      background: rgba(255,255,255,0.12);
-      color: #fff;
-      border: 1.5px solid rgba(255,255,255,0.3);
-      border-radius: 50px;
-      padding: 12px 20px;
-      font-size: 14px;
-      cursor: pointer;
+      background: rgba(255,255,255,0.12); color: #fff;
+      border: 1.5px solid rgba(255,255,255,0.3); border-radius: 50px;
+      padding: 12px 20px; font-size: 14px; cursor: pointer;
     }
     #fileInput, #snapCanvas { display: none; }
   </style>
@@ -272,13 +232,13 @@
 
 <div id="guide">
   <h1>😄 Face Drop</h1>
-  <p class="sub">친구나 가족 사진을 넣어봐요<br>얼굴이 하늘에서 떨어져요</p>
+  <p class="sub">친구, 가족, 반려동물 사진을 넣어봐요<br>얼굴이 하늘에서 떨어져요</p>
   <button id="startBtn">시작하기</button>
 </div>
 
 <canvas id="canvas"></canvas>
-<div id="version">v1.0</div>
-<div id="faceCounter">얼굴 0개</div>
+<div id="version">v1.1</div>
+<div id="faceCounter"></div>
 <div id="modelStatus">⏳ 모델 로딩 중...</div>
 <div id="queueBadge"></div>
 <div id="toast"></div>
@@ -298,7 +258,7 @@
 
 <div id="confirmModal">
   <div id="confirmBox">
-    <p>얼굴을 모두 지울까요?</p>
+    <p>모두 지울까요?</p>
     <div class="confirmBtns">
       <button id="confirmNo">취소</button>
       <button id="confirmYes">지우기</button>
@@ -316,7 +276,11 @@
   </div>
 </div>
 
+<!-- face-api.js: 사람 얼굴 -->
 <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
+<!-- TensorFlow.js + COCO-SSD: 동물 감지 -->
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.2.0/dist/tf.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd@2.2.2/dist/coco-ssd.min.js"></script>
 
 <script>
 const canvas = document.getElementById('canvas');
@@ -345,6 +309,8 @@ const selectRing = document.getElementById('selectRing');
 const sizeHint = document.getElementById('sizeHint');
 
 const PANEL_H = 90;
+// COCO-SSD에서 감지할 동물 클래스
+const ANIMAL_CLASSES = ['cat', 'dog'];
 
 startBtn.addEventListener('click', () => { guide.style.display = 'none'; });
 
@@ -361,217 +327,36 @@ function showToast(msg, color = 'rgba(30,30,30,0.9)') {
   toastEl.style.background = color;
   toastEl.classList.add('show');
   if (toastTimer) clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => toastEl.classList.remove('show'), 2500);
-}
-
-// 일러스트 얼굴 생성 (코드로 그린 캐릭터)
-const DEMO_FACES = [
-  // 각 캐릭터: { 피부색, 표정, 헤어 }
-  { skin: '#FDBCB4', hair: '#2C1810', expr: 'smile',  hairStyle: 'short' },
-  { skin: '#F1C27D', hair: '#1a1a2e', expr: 'laugh',  hairStyle: 'long'  },
-  { skin: '#C68642', hair: '#4a3728', expr: 'cool',   hairStyle: 'curly' },
-  { skin: '#8D5524', hair: '#0d0d0d', expr: 'smile',  hairStyle: 'short' },
-  { skin: '#FDDBB4', hair: '#d4a853', expr: 'laugh',  hairStyle: 'long'  },
-];
-
-function drawIllustFace(config, size) {
-  const fc = document.createElement('canvas');
-  fc.width = size;
-  fc.height = size;
-  const c = fc.getContext('2d');
-  const cx = size / 2;
-  const cy = size / 2 + size * 0.05;
-  const r = size * 0.36;
-
-  // 헤어 (뒤)
-  c.fillStyle = config.hair;
-  if (config.hairStyle === 'long') {
-    c.beginPath();
-    c.ellipse(cx, cy + r * 0.3, r * 0.85, r * 1.6, 0, 0, Math.PI * 2);
-    c.fill();
-  } else if (config.hairStyle === 'curly') {
-    for (let i = 0; i < 8; i++) {
-      const angle = (i / 8) * Math.PI * 2 - Math.PI / 2;
-      const hx = cx + Math.cos(angle) * r * 0.85;
-      const hy = cy + Math.sin(angle) * r * 0.7;
-      c.beginPath();
-      c.arc(hx, hy, r * 0.3, 0, Math.PI * 2);
-      c.fill();
-    }
-  }
-
-  // 얼굴 (피부)
-  c.fillStyle = config.skin;
-  c.beginPath();
-  c.ellipse(cx, cy, r, r * 1.1, 0, 0, Math.PI * 2);
-  c.fill();
-
-  // 헤어 (앞)
-  c.fillStyle = config.hair;
-  if (config.hairStyle === 'short') {
-    c.beginPath();
-    c.ellipse(cx, cy - r * 0.65, r * 0.9, r * 0.55, 0, Math.PI, 0);
-    c.fill();
-    // 옆머리
-    c.beginPath();
-    c.ellipse(cx - r * 0.82, cy - r * 0.1, r * 0.22, r * 0.45, -0.3, 0, Math.PI * 2);
-    c.fill();
-    c.beginPath();
-    c.ellipse(cx + r * 0.82, cy - r * 0.1, r * 0.22, r * 0.45, 0.3, 0, Math.PI * 2);
-    c.fill();
-  } else if (config.hairStyle === 'long') {
-    c.beginPath();
-    c.ellipse(cx, cy - r * 0.7, r * 0.92, r * 0.5, 0, Math.PI, 0);
-    c.fill();
-  } else if (config.hairStyle === 'curly') {
-    c.beginPath();
-    c.ellipse(cx, cy - r * 0.75, r * 0.88, r * 0.45, 0, Math.PI, 0);
-    c.fill();
-    // 앞 곱슬
-    for (let i = -1; i <= 1; i++) {
-      c.beginPath();
-      c.arc(cx + i * r * 0.35, cy - r * 0.72, r * 0.22, 0, Math.PI * 2);
-      c.fill();
-    }
-  }
-
-  // 눈썹
-  c.strokeStyle = config.hair;
-  c.lineWidth = size * 0.025;
-  c.lineCap = 'round';
-  [-1, 1].forEach(side => {
-    c.beginPath();
-    c.moveTo(cx + side * r * 0.52, cy - r * 0.28);
-    c.quadraticCurveTo(cx + side * r * 0.32, cy - r * 0.38, cx + side * r * 0.12, cy - r * 0.3);
-    c.stroke();
-  });
-
-  // 눈
-  const eyeY = cy - r * 0.08;
-  [-1, 1].forEach(side => {
-    const ex = cx + side * r * 0.33;
-    // 흰자
-    c.fillStyle = '#fff';
-    c.beginPath();
-    c.ellipse(ex, eyeY, r * 0.17, r * 0.13, 0, 0, Math.PI * 2);
-    c.fill();
-    // 동공
-    c.fillStyle = '#1a1a1a';
-    c.beginPath();
-    c.arc(ex, eyeY, r * 0.09, 0, Math.PI * 2);
-    c.fill();
-    // 하이라이트
-    c.fillStyle = '#fff';
-    c.beginPath();
-    c.arc(ex + r * 0.04, eyeY - r * 0.04, r * 0.03, 0, Math.PI * 2);
-    c.fill();
-
-    if (config.expr === 'cool') {
-      // 선글라스
-      c.fillStyle = 'rgba(0,0,0,0.75)';
-      c.beginPath();
-      c.roundRect(ex - r * 0.2, eyeY - r * 0.14, r * 0.4, r * 0.26, r * 0.06);
-      c.fill();
-    }
-  });
-
-  // 선글라스 브릿지
-  if (config.expr === 'cool') {
-    c.strokeStyle = 'rgba(0,0,0,0.75)';
-    c.lineWidth = size * 0.02;
-    c.beginPath();
-    c.moveTo(cx - r * 0.13, eyeY);
-    c.lineTo(cx + r * 0.13, eyeY);
-    c.stroke();
-  }
-
-  // 코
-  c.strokeStyle = config.skin === '#8D5524' ? 'rgba(0,0,0,0.25)' : 'rgba(0,0,0,0.15)';
-  c.lineWidth = size * 0.018;
-  c.beginPath();
-  c.moveTo(cx - r * 0.08, cy + r * 0.12);
-  c.quadraticCurveTo(cx - r * 0.14, cy + r * 0.28, cx, cy + r * 0.3);
-  c.quadraticCurveTo(cx + r * 0.14, cy + r * 0.28, cx + r * 0.08, cy + r * 0.12);
-  c.stroke();
-
-  // 입
-  const mouthY = cy + r * 0.52;
-  if (config.expr === 'smile' || config.expr === 'cool') {
-    c.strokeStyle = '#c0524a';
-    c.lineWidth = size * 0.025;
-    c.beginPath();
-    c.moveTo(cx - r * 0.28, mouthY - r * 0.05);
-    c.quadraticCurveTo(cx, mouthY + r * 0.18, cx + r * 0.28, mouthY - r * 0.05);
-    c.stroke();
-    // 입술
-    c.fillStyle = '#e06060';
-    c.beginPath();
-    c.moveTo(cx - r * 0.28, mouthY - r * 0.05);
-    c.quadraticCurveTo(cx, mouthY + r * 0.18, cx + r * 0.28, mouthY - r * 0.05);
-    c.quadraticCurveTo(cx, mouthY + r * 0.08, cx - r * 0.28, mouthY - r * 0.05);
-    c.fill();
-  } else if (config.expr === 'laugh') {
-    c.fillStyle = '#c0524a';
-    c.beginPath();
-    c.moveTo(cx - r * 0.3, mouthY - r * 0.05);
-    c.quadraticCurveTo(cx, mouthY + r * 0.25, cx + r * 0.3, mouthY - r * 0.05);
-    c.closePath();
-    c.fill();
-    // 이빨
-    c.fillStyle = '#fff';
-    c.beginPath();
-    c.moveTo(cx - r * 0.25, mouthY - r * 0.02);
-    c.lineTo(cx + r * 0.25, mouthY - r * 0.02);
-    c.lineTo(cx + r * 0.22, mouthY + r * 0.1);
-    c.lineTo(cx - r * 0.22, mouthY + r * 0.1);
-    c.closePath();
-    c.fill();
-  }
-
-  // 볼터치
-  if (config.expr !== 'cool') {
-    c.fillStyle = 'rgba(255,160,140,0.25)';
-    [-1, 1].forEach(side => {
-      c.beginPath();
-      c.ellipse(cx + side * r * 0.56, cy + r * 0.18, r * 0.18, r * 0.1, 0, 0, Math.PI * 2);
-      c.fill();
-    });
-  }
-
-  // 외곽 페이드
-  const gradient = c.createRadialGradient(cx, cy, r * 0.7, cx, cy, r * 1.1);
-  gradient.addColorStop(0, 'rgba(0,0,0,0)');
-  gradient.addColorStop(1, 'rgba(0,0,0,1)');
-  c.globalCompositeOperation = 'destination-out';
-  c.fillStyle = gradient;
-  c.beginPath();
-  c.arc(cx, cy, r * 1.15, 0, Math.PI * 2);
-  c.fill();
-  c.globalCompositeOperation = 'source-over';
-
-  return fc;
+  toastTimer = setTimeout(() => toastEl.classList.remove('show'), 2800);
 }
 
 // 모델 로딩
 const MODEL_URL = '/photo-drop-game';
-let modelsLoaded = false;
+let faceModelsLoaded = false;
+let cocoModel = null;
+let allModelsReady = false;
 
 async function loadModels() {
-  if (modelsLoaded) return true;
   try {
+    modelStatus.textContent = '⏳ 얼굴 모델 로딩 중...';
     await Promise.all([
       faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL),
       faceapi.nets.faceLandmark68TinyNet.loadFromUri(MODEL_URL),
     ]);
-    modelsLoaded = true;
-    modelStatus.style.opacity = '0';
-    setTimeout(() => { modelStatus.style.display = 'none'; }, 800);
+    faceModelsLoaded = true;
+
+    // 버튼 먼저 활성화 (얼굴 감지는 바로 가능)
     uploadBtn.disabled = false;
     cameraBtn.disabled = false;
-    return true;
+
+    modelStatus.textContent = '⏳ 동물 모델 로딩 중...';
+    cocoModel = await cocoSsd.load({ base: 'lite_mobilenet_v2' });
+    allModelsReady = true;
+
+    modelStatus.style.opacity = '0';
+    setTimeout(() => { modelStatus.style.display = 'none'; }, 800);
   } catch(e) {
     modelStatus.textContent = '❌ 새로고침해주세요';
-    return false;
   }
 }
 
@@ -601,32 +386,34 @@ async function processQueue() {
 }
 
 // 베지어 곡선 윤곽
-function drawSmoothContour(ctx, points) {
+function drawSmoothContour(c, points) {
   if (points.length < 3) return;
-  ctx.beginPath();
-  ctx.moveTo((points[0].x + points[1].x) / 2, (points[0].y + points[1].y) / 2);
+  c.beginPath();
+  c.moveTo((points[0].x + points[1].x) / 2, (points[0].y + points[1].y) / 2);
   for (let i = 1; i < points.length - 1; i++) {
     const mx = (points[i].x + points[i+1].x) / 2;
     const my = (points[i].y + points[i+1].y) / 2;
-    ctx.quadraticCurveTo(points[i].x, points[i].y, mx, my);
+    c.quadraticCurveTo(points[i].x, points[i].y, mx, my);
   }
-  ctx.quadraticCurveTo(
+  c.quadraticCurveTo(
     points[points.length-1].x, points[points.length-1].y,
     (points[points.length-1].x + points[0].x) / 2,
     (points[points.length-1].y + points[0].y) / 2
   );
-  ctx.closePath();
+  c.closePath();
 }
 
-async function detectAndCropFaces(imgEl) {
+// 사람 얼굴 감지 + 윤곽 크롭
+async function detectHumanFaces(imgEl) {
+  if (!faceModelsLoaded) return [];
   const iw = imgEl.naturalWidth || imgEl.width;
   const ih = imgEl.naturalHeight || imgEl.height;
 
   let detectTarget = imgEl;
-  const maxDetectSize = 800;
   let scaleRatio = 1;
-  if (iw > maxDetectSize || ih > maxDetectSize) {
-    scaleRatio = maxDetectSize / Math.max(iw, ih);
+  const maxSize = 800;
+  if (iw > maxSize || ih > maxSize) {
+    scaleRatio = maxSize / Math.max(iw, ih);
     const rc = document.createElement('canvas');
     rc.width = Math.round(iw * scaleRatio);
     rc.height = Math.round(ih * scaleRatio);
@@ -634,36 +421,37 @@ async function detectAndCropFaces(imgEl) {
     detectTarget = rc;
   }
 
-  const options = new faceapi.TinyFaceDetectorOptions({ inputSize: 416, scoreThreshold: 0.3 });
-  const detections = await faceapi.detectAllFaces(detectTarget, options).withFaceLandmarks(true);
+  const detections = await faceapi
+    .detectAllFaces(detectTarget, new faceapi.TinyFaceDetectorOptions({ inputSize: 416, scoreThreshold: 0.3 }))
+    .withFaceLandmarks(true);
+
   if (!detections || detections.length === 0) return [];
 
   const results = [];
+  const availH = canvas.height - PANEL_H;
+
   detections.forEach(det => {
     const allPoints = det.landmarks.positions.map(p => ({ x: p.x / scaleRatio, y: p.y / scaleRatio }));
-    const box = det.detection.box;
-    const boxH = box.height / scaleRatio;
-
+    const boxH = det.detection.box.height / scaleRatio;
     const faceRatio = boxH / ih;
-    const minScreenRatio = 0.09;
-    const maxScreenRatio = 0.38;
-    const clampedRatio = Math.max(0.05, Math.min(0.8, faceRatio));
-    const t = (clampedRatio - 0.05) / (0.8 - 0.05);
-    const screenRatio = minScreenRatio + t * (maxScreenRatio - minScreenRatio);
-    const availH = canvas.height - PANEL_H;
-    const targetH_px = availH * screenRatio;
+    const t = (Math.max(0.05, Math.min(0.8, faceRatio)) - 0.05) / 0.75;
+    const targetH = availH * (0.09 + t * 0.29);
 
     const jaw = allPoints.slice(0, 17);
     const leftBrow = allPoints.slice(17, 22);
     const rightBrow = allPoints.slice(22, 27);
     const browTopY = Math.min(...leftBrow.map(p => p.y), ...rightBrow.map(p => p.y));
     const chinY = Math.max(...jaw.map(p => p.y));
-    const foreheadOffset = (chinY - browTopY) * 0.5;
-    const foreheadY = browTopY - foreheadOffset;
-    const leftTemple = { x: jaw[0].x - (jaw[2].x - jaw[0].x) * 0.1, y: foreheadY + foreheadOffset * 0.2 };
-    const rightTemple = { x: jaw[16].x + (jaw[16].x - jaw[14].x) * 0.1, y: foreheadY + foreheadOffset * 0.2 };
-    const topCenter = { x: (jaw[0].x + jaw[16].x) / 2, y: foreheadY };
-    const contour = [jaw[0], leftTemple, topCenter, rightTemple, jaw[16], ...jaw.slice(1, 16).reverse()];
+    const fhOffset = (chinY - browTopY) * 0.5;
+    const foreheadY = browTopY - fhOffset;
+    const contour = [
+      jaw[0],
+      { x: jaw[0].x - (jaw[2].x - jaw[0].x) * 0.1, y: foreheadY + fhOffset * 0.2 },
+      { x: (jaw[0].x + jaw[16].x) / 2, y: foreheadY },
+      { x: jaw[16].x + (jaw[16].x - jaw[14].x) * 0.1, y: foreheadY + fhOffset * 0.2 },
+      jaw[16],
+      ...jaw.slice(1, 16).reverse()
+    ];
 
     let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
     contour.forEach(p => {
@@ -675,38 +463,34 @@ async function detectAndCropFaces(imgEl) {
     minX = Math.max(0, minX - padX); minY = Math.max(0, minY - padY);
     maxX = Math.min(iw, maxX + padX); maxY = Math.min(ih, maxY + padY);
 
-    const cropW = maxX - minX;
-    const cropH = maxY - minY;
+    const cropW = maxX - minX, cropH = maxY - minY;
     const fc = document.createElement('canvas');
-    fc.width = Math.round(cropW);
-    fc.height = Math.round(cropH);
+    fc.width = Math.round(cropW); fc.height = Math.round(cropH);
     const fctx = fc.getContext('2d');
-    const localContour = contour.map(p => ({ x: p.x - minX, y: p.y - minY }));
+    const lc = contour.map(p => ({ x: p.x - minX, y: p.y - minY }));
     fctx.save();
-    drawSmoothContour(fctx, localContour);
+    drawSmoothContour(fctx, lc);
     fctx.clip();
     fctx.drawImage(imgEl, minX, minY, cropW, cropH, 0, 0, fc.width, fc.height);
     fctx.restore();
 
-    const imgData = fctx.getImageData(0, 0, fc.width, fc.height);
-    const d = imgData.data;
-    const fadeW = 16;
+    // 경계 페이드
+    const id = fctx.getImageData(0, 0, fc.width, fc.height);
+    const d = id.data;
+    const fw = 16;
     for (let py = 0; py < fc.height; py++) {
       for (let px = 0; px < fc.width; px++) {
         const idx = (py * fc.width + px) * 4;
-        if (d[idx + 3] === 0) continue;
-        const edgeDist = Math.min(px, py, fc.width - 1 - px, fc.height - 1 - py);
-        if (edgeDist < fadeW) {
-          const tt = edgeDist / fadeW;
-          d[idx + 3] = Math.round(d[idx + 3] * tt * tt);
-        }
+        if (d[idx+3] === 0) continue;
+        const ed = Math.min(px, py, fc.width-1-px, fc.height-1-py);
+        if (ed < fw) { const tt = ed/fw; d[idx+3] = Math.round(d[idx+3]*tt*tt); }
       }
     }
-    fctx.putImageData(imgData, 0, 0);
+    fctx.putImageData(id, 0, 0);
 
-    const faceImg = new Image();
-    faceImg.src = fc.toDataURL('image/png');
-    results.push({ img: faceImg, cropW, cropH, targetH: targetH_px });
+    const img = new Image();
+    img.src = fc.toDataURL('image/png');
+    results.push({ img, cropW, cropH, targetH, type: 'human' });
   });
 
   await Promise.all(results.map(r => new Promise(res => {
@@ -715,167 +499,287 @@ async function detectAndCropFaces(imgEl) {
   return results;
 }
 
-// 물리
-const GRAVITY = 0.52;
-const FLOOR_FRICTION = 0.72;
-const BOUNCE = 0.28;
-const AIR_FRICTION = 0.996;
-const ANGULAR_DAMP = 0.83;
+// 동물 감지 + 크롭 (배경 포함, 페이드 처리)
+async function detectAnimals(imgEl) {
+  if (!cocoModel) return [];
+  const iw = imgEl.naturalWidth || imgEl.width;
+  const ih = imgEl.naturalHeight || imgEl.height;
+  const availH = canvas.height - PANEL_H;
 
+  let predictions;
+  try {
+    predictions = await cocoModel.detect(imgEl);
+  } catch(e) { return []; }
+
+  const animals = predictions.filter(p => ANIMAL_CLASSES.includes(p.class) && p.score > 0.5);
+  if (animals.length === 0) return [];
+
+  const results = [];
+
+  animals.forEach(animal => {
+    let [bx, by, bw, bh] = animal.bbox;
+
+    // 여백 15% 추가
+    const padX = bw * 0.15;
+    const padY = bh * 0.15;
+    bx = Math.max(0, bx - padX);
+    by = Math.max(0, by - padY);
+    bw = Math.min(iw - bx, bw + padX * 2);
+    bh = Math.min(ih - by, bh + padY * 2);
+
+    // 크기 매핑
+    const animalRatio = bh / ih;
+    const t = (Math.max(0.05, Math.min(0.8, animalRatio)) - 0.05) / 0.75;
+    const targetH = availH * (0.1 + t * 0.32);
+
+    const fc = document.createElement('canvas');
+    fc.width = Math.round(bw); fc.height = Math.round(bh);
+    const fctx = fc.getContext('2d');
+    fctx.drawImage(imgEl, bx, by, bw, bh, 0, 0, fc.width, fc.height);
+
+    // 외곽 페이드 (동물은 더 넓게)
+    const id = fctx.getImageData(0, 0, fc.width, fc.height);
+    const d = id.data;
+    const fw = 24;
+    for (let py = 0; py < fc.height; py++) {
+      for (let px = 0; px < fc.width; px++) {
+        const idx = (py * fc.width + px) * 4;
+        const ed = Math.min(px, py, fc.width-1-px, fc.height-1-py);
+        if (ed < fw) { const tt = ed/fw; d[idx+3] = Math.round(d[idx+3]*tt*tt); }
+      }
+    }
+    fctx.putImageData(id, 0, 0);
+
+    const img = new Image();
+    img.src = fc.toDataURL('image/png');
+    results.push({ img, cropW: bw, cropH: bh, targetH, type: animal.class });
+  });
+
+  await Promise.all(results.map(r => new Promise(res => {
+    if (r.img.complete) res(); else r.img.onload = res;
+  })));
+  return results;
+}
+
+// 일러스트 데모 얼굴
+const DEMO_CONFIGS = [
+  { skin: '#FDBCB4', hair: '#2C1810', expr: 'smile',  hairStyle: 'short' },
+  { skin: '#F1C27D', hair: '#1a1a2e', expr: 'laugh',  hairStyle: 'long'  },
+  { skin: '#C68642', hair: '#4a3728', expr: 'cool',   hairStyle: 'curly' },
+  { skin: '#8D5524', hair: '#0d0d0d', expr: 'smile',  hairStyle: 'short' },
+  { skin: '#FDDBB4', hair: '#d4a853', expr: 'laugh',  hairStyle: 'long'  },
+];
+
+function drawIllustFace(config, size) {
+  const fc = document.createElement('canvas');
+  fc.width = size; fc.height = size;
+  const c = fc.getContext('2d');
+  const cx = size/2, cy = size/2 + size*0.05, r = size*0.36;
+
+  c.fillStyle = config.hair;
+  if (config.hairStyle === 'long') {
+    c.beginPath(); c.ellipse(cx, cy+r*0.3, r*0.85, r*1.6, 0, 0, Math.PI*2); c.fill();
+  } else if (config.hairStyle === 'curly') {
+    for (let i=0; i<8; i++) {
+      const a=(i/8)*Math.PI*2-Math.PI/2;
+      c.beginPath(); c.arc(cx+Math.cos(a)*r*0.85, cy+Math.sin(a)*r*0.7, r*0.3, 0, Math.PI*2); c.fill();
+    }
+  }
+
+  c.fillStyle = config.skin;
+  c.beginPath(); c.ellipse(cx, cy, r, r*1.1, 0, 0, Math.PI*2); c.fill();
+
+  c.fillStyle = config.hair;
+  if (config.hairStyle === 'short') {
+    c.beginPath(); c.ellipse(cx, cy-r*0.65, r*0.9, r*0.55, 0, Math.PI, 0); c.fill();
+    [-0.82, 0.82].forEach(s => { c.beginPath(); c.ellipse(cx+s*r, cy-r*0.1, r*0.22, r*0.45, s*0.3, 0, Math.PI*2); c.fill(); });
+  } else if (config.hairStyle === 'long') {
+    c.beginPath(); c.ellipse(cx, cy-r*0.7, r*0.92, r*0.5, 0, Math.PI, 0); c.fill();
+  } else {
+    c.beginPath(); c.ellipse(cx, cy-r*0.75, r*0.88, r*0.45, 0, Math.PI, 0); c.fill();
+    [-1,0,1].forEach(i => { c.beginPath(); c.arc(cx+i*r*0.35, cy-r*0.72, r*0.22, 0, Math.PI*2); c.fill(); });
+  }
+
+  c.strokeStyle=config.hair; c.lineWidth=size*0.025; c.lineCap='round';
+  [-1,1].forEach(s => {
+    c.beginPath(); c.moveTo(cx+s*r*0.52, cy-r*0.28);
+    c.quadraticCurveTo(cx+s*r*0.32, cy-r*0.38, cx+s*r*0.12, cy-r*0.3); c.stroke();
+  });
+
+  const eyeY = cy-r*0.08;
+  [-1,1].forEach(s => {
+    const ex = cx+s*r*0.33;
+    c.fillStyle='#fff'; c.beginPath(); c.ellipse(ex, eyeY, r*0.17, r*0.13, 0, 0, Math.PI*2); c.fill();
+    c.fillStyle='#1a1a1a'; c.beginPath(); c.arc(ex, eyeY, r*0.09, 0, Math.PI*2); c.fill();
+    c.fillStyle='#fff'; c.beginPath(); c.arc(ex+r*0.04, eyeY-r*0.04, r*0.03, 0, Math.PI*2); c.fill();
+    if (config.expr==='cool') {
+      c.fillStyle='rgba(0,0,0,0.75)'; c.beginPath();
+      c.roundRect(ex-r*0.2, eyeY-r*0.14, r*0.4, r*0.26, r*0.06); c.fill();
+    }
+  });
+  if (config.expr==='cool') {
+    c.strokeStyle='rgba(0,0,0,0.75)'; c.lineWidth=size*0.02;
+    c.beginPath(); c.moveTo(cx-r*0.13, eyeY); c.lineTo(cx+r*0.13, eyeY); c.stroke();
+  }
+
+  c.strokeStyle='rgba(0,0,0,0.15)'; c.lineWidth=size*0.018;
+  c.beginPath(); c.moveTo(cx-r*0.08, cy+r*0.12);
+  c.quadraticCurveTo(cx-r*0.14, cy+r*0.28, cx, cy+r*0.3);
+  c.quadraticCurveTo(cx+r*0.14, cy+r*0.28, cx+r*0.08, cy+r*0.12); c.stroke();
+
+  const mY = cy+r*0.52;
+  if (config.expr==='smile'||config.expr==='cool') {
+    c.strokeStyle='#c0524a'; c.lineWidth=size*0.025;
+    c.beginPath(); c.moveTo(cx-r*0.28, mY-r*0.05);
+    c.quadraticCurveTo(cx, mY+r*0.18, cx+r*0.28, mY-r*0.05); c.stroke();
+  } else {
+    c.fillStyle='#c0524a';
+    c.beginPath(); c.moveTo(cx-r*0.3, mY-r*0.05);
+    c.quadraticCurveTo(cx, mY+r*0.25, cx+r*0.3, mY-r*0.05); c.closePath(); c.fill();
+    c.fillStyle='#fff';
+    c.beginPath(); c.moveTo(cx-r*0.25, mY-r*0.02); c.lineTo(cx+r*0.25, mY-r*0.02);
+    c.lineTo(cx+r*0.22, mY+r*0.1); c.lineTo(cx-r*0.22, mY+r*0.1); c.closePath(); c.fill();
+  }
+  if (config.expr!=='cool') {
+    c.fillStyle='rgba(255,160,140,0.25)';
+    [-1,1].forEach(s => { c.beginPath(); c.ellipse(cx+s*r*0.56, cy+r*0.18, r*0.18, r*0.1, 0, 0, Math.PI*2); c.fill(); });
+  }
+
+  const g = c.createRadialGradient(cx, cy, r*0.7, cx, cy, r*1.1);
+  g.addColorStop(0, 'rgba(0,0,0,0)'); g.addColorStop(1, 'rgba(0,0,0,1)');
+  c.globalCompositeOperation='destination-out';
+  c.fillStyle=g; c.beginPath(); c.arc(cx, cy, r*1.15, 0, Math.PI*2); c.fill();
+  c.globalCompositeOperation='source-over';
+  return fc;
+}
+
+// 물리
+const GRAVITY = 0.52, FLOOR_FRICTION = 0.72, BOUNCE = 0.28, AIR_FRICTION = 0.996, ANGULAR_DAMP = 0.83;
 const objects = [];
-let demoObjects = []; // 데모 얼굴 별도 관리
 
 function updateFaceCounter() {
   const real = objects.filter(o => !o.isDemo).length;
-  faceCounter.textContent = real > 0 ? `얼굴 ${real}개` : '';
+  faceCounter.textContent = real > 0 ? `${real}개` : '';
 }
 
-let selectedObj = null;
-let resizeStartY = 0, resizeStartW = 0, resizeStartH = 0;
+let selectedObj = null, resizeStartY = 0, resizeStartW = 0, resizeStartH = 0;
 
 function updateSelectRing(obj) {
   if (!obj) { selectRing.classList.remove('show'); sizeHint.classList.remove('show'); return; }
   const r = Math.max(obj.rx, obj.ry);
-  selectRing.style.left = (obj.x - r - 4) + 'px';
-  selectRing.style.top = (obj.y - r - 4) + 'px';
-  selectRing.style.width = (r * 2 + 8) + 'px';
-  selectRing.style.height = (r * 2 + 8) + 'px';
+  selectRing.style.left = (obj.x-r-4)+'px'; selectRing.style.top = (obj.y-r-4)+'px';
+  selectRing.style.width = (r*2+8)+'px'; selectRing.style.height = (r*2+8)+'px';
   selectRing.classList.add('show');
 }
 
-class FaceObject {
-  constructor(img, x, y, w, h, isDemo = false) {
-    this.img = img;
-    this.x = x; this.y = y;
-    this.w = w; this.h = h;
-    this.isDemo = isDemo;
-    this.vx = (Math.random() - 0.5) * 4;
-    this.vy = isDemo ? -2 : 0;
-    this.angle = (Math.random() - 0.5) * 0.15;
-    this.av = (Math.random() - 0.5) * 0.025;
-    this.isDragging = false;
-    this.lastX = x; this.lastY = y;
-    this.rx = w * 0.44;
-    this.ry = h * 0.44;
-    this.r = Math.min(this.rx, this.ry);
-    this.alpha = isDemo ? 0 : 1; // 데모는 페이드인
+class DropObject {
+  constructor(img, x, y, w, h, isDemo=false) {
+    this.img=img; this.x=x; this.y=y; this.w=w; this.h=h; this.isDemo=isDemo;
+    this.vx=(Math.random()-0.5)*4; this.vy=0;
+    this.angle=(Math.random()-0.5)*0.15; this.av=(Math.random()-0.5)*0.025;
+    this.isDragging=false; this.lastX=x; this.lastY=y;
+    this.rx=w*0.44; this.ry=h*0.44; this.r=Math.min(this.rx,this.ry);
+    this.alpha=isDemo?0:1;
   }
-
-  setSize(w, h) {
-    this.w = w; this.h = h;
-    this.rx = w * 0.44; this.ry = h * 0.44;
-    this.r = Math.min(this.rx, this.ry);
+  setSize(w,h){ this.w=w; this.h=h; this.rx=w*0.44; this.ry=h*0.44; this.r=Math.min(this.rx,this.ry); }
+  update(){
+    if(this.isDragging||this===selectedObj) return;
+    if(this.isDemo&&this.alpha<1) this.alpha=Math.min(1,this.alpha+0.02);
+    this.vy+=GRAVITY; this.vx*=AIR_FRICTION;
+    this.x+=this.vx; this.y+=this.vy;
+    this.angle+=this.av; this.av*=ANGULAR_DAMP;
+    const floor=canvas.height-PANEL_H-this.ry;
+    if(this.y>=floor){ this.y=floor; this.vy*=-BOUNCE; this.vx*=FLOOR_FRICTION; this.av*=FLOOR_FRICTION; if(Math.abs(this.vy)<1) this.vy=0; }
+    if(this.x-this.rx<=0){ this.x=this.rx; this.vx=Math.abs(this.vx)*BOUNCE; this.av*=-0.4; }
+    if(this.x+this.rx>=canvas.width){ this.x=canvas.width-this.rx; this.vx=-Math.abs(this.vx)*BOUNCE; this.av*=-0.4; }
   }
-
-  update() {
-    if (this.isDragging || this === selectedObj) return;
-
-    // 데모 페이드인
-    if (this.isDemo && this.alpha < 1) this.alpha = Math.min(1, this.alpha + 0.02);
-
-    this.vy += GRAVITY;
-    this.vx *= AIR_FRICTION;
-    this.x += this.vx; this.y += this.vy;
-    this.angle += this.av;
-    this.av *= ANGULAR_DAMP;
-
-    const floor = canvas.height - PANEL_H - this.ry;
-    if (this.y >= floor) {
-      this.y = floor; this.vy *= -BOUNCE;
-      this.vx *= FLOOR_FRICTION; this.av *= FLOOR_FRICTION;
-      if (Math.abs(this.vy) < 1.0) this.vy = 0;
-    }
-    if (this.x - this.rx <= 0) { this.x = this.rx; this.vx = Math.abs(this.vx) * BOUNCE; this.av *= -0.4; }
-    if (this.x + this.rx >= canvas.width) { this.x = canvas.width - this.rx; this.vx = -Math.abs(this.vx) * BOUNCE; this.av *= -0.4; }
+  draw(){
+    ctx.save(); ctx.globalAlpha=this===selectedObj?0.85:this.alpha;
+    ctx.translate(this.x,this.y); ctx.rotate(this.angle);
+    ctx.shadowColor='rgba(0,0,0,0.7)'; ctx.shadowBlur=14; ctx.shadowOffsetY=6;
+    ctx.drawImage(this.img,-this.w/2,-this.h/2,this.w,this.h); ctx.restore();
   }
-
-  draw() {
-    ctx.save();
-    ctx.globalAlpha = this === selectedObj ? 0.85 : this.alpha;
-    ctx.translate(this.x, this.y);
-    ctx.rotate(this.angle);
-    ctx.shadowColor = 'rgba(0,0,0,0.7)';
-    ctx.shadowBlur = 14;
-    ctx.shadowOffsetY = 6;
-    ctx.drawImage(this.img, -this.w / 2, -this.h / 2, this.w, this.h);
-    ctx.restore();
-  }
-
-  hitTest(px, py) {
-    const dx = (px - this.x) / this.rx;
-    const dy = (py - this.y) / this.ry;
-    return dx * dx + dy * dy <= 1;
-  }
+  hitTest(px,py){ const dx=(px-this.x)/this.rx, dy=(py-this.y)/this.ry; return dx*dx+dy*dy<=1; }
 }
 
-// 데모 얼굴 생성 — 시작하자마자 떨어뜨림
 function spawnDemoFaces() {
   const availH = canvas.height - PANEL_H;
   const faceSize = Math.min(canvas.width, availH) * 0.28;
-
-  DEMO_FACES.forEach((config, i) => {
-    const fc = drawIllustFace(config, Math.round(faceSize * 1.4));
+  DEMO_CONFIGS.forEach((cfg, i) => {
+    const fc = drawIllustFace(cfg, Math.round(faceSize*1.4));
     const img = new Image();
     img.src = fc.toDataURL('image/png');
-    const delay = i * 400;
     setTimeout(() => {
-      const x = (canvas.width / (DEMO_FACES.length + 1)) * (i + 1);
-      const y = -faceSize * 0.6;
-      const obj = new FaceObject(img, x, y, faceSize, faceSize, true);
-      obj.vx = (Math.random() - 0.5) * 3;
+      const x = (canvas.width/(DEMO_CONFIGS.length+1))*(i+1);
+      const obj = new DropObject(img, x, -faceSize*0.6, faceSize, faceSize, true);
+      obj.vx = (Math.random()-0.5)*3;
       objects.push(obj);
-    }, delay);
+    }, i*400);
   });
 }
 
 function resolveCollisions() {
-  for (let iter = 0; iter < 3; iter++) {
-    for (let i = 0; i < objects.length; i++) {
-      for (let j = i + 1; j < objects.length; j++) {
-        const a = objects[i], b = objects[j];
-        if (a === selectedObj || b === selectedObj) continue;
-        const dx = b.x - a.x, dy = b.y - a.y;
-        const distSq = dx*dx + dy*dy;
-        const minDist = a.r + b.r;
-        if (distSq >= minDist*minDist || distSq < 0.01) continue;
-        const dist = Math.sqrt(distSq);
-        const nx = dx/dist, ny = dy/dist;
-        const overlap = (minDist - dist) * 0.5;
-        if (!a.isDragging) { a.x -= nx*overlap; a.y -= ny*overlap; }
-        if (!b.isDragging) { b.x += nx*overlap; b.y += ny*overlap; }
-        const dot = (a.vx-b.vx)*nx + (a.vy-b.vy)*ny;
-        if (dot <= 0) continue;
-        const imp = dot * 0.6;
-        if (!a.isDragging) { a.vx -= imp*nx; a.vy -= imp*ny; a.av += imp*0.025*(Math.random()-0.5); }
-        if (!b.isDragging) { b.vx += imp*nx; b.vy += imp*ny; b.av -= imp*0.025*(Math.random()-0.5); }
+  for(let iter=0;iter<3;iter++){
+    for(let i=0;i<objects.length;i++){
+      for(let j=i+1;j<objects.length;j++){
+        const a=objects[i], b=objects[j];
+        if(a===selectedObj||b===selectedObj) continue;
+        const dx=b.x-a.x, dy=b.y-a.y, distSq=dx*dx+dy*dy, minDist=a.r+b.r;
+        if(distSq>=minDist*minDist||distSq<0.01) continue;
+        const dist=Math.sqrt(distSq), nx=dx/dist, ny=dy/dist, ov=(minDist-dist)*0.5;
+        if(!a.isDragging){a.x-=nx*ov;a.y-=ny*ov;} if(!b.isDragging){b.x+=nx*ov;b.y+=ny*ov;}
+        const dot=(a.vx-b.vx)*nx+(a.vy-b.vy)*ny; if(dot<=0) continue;
+        const imp=dot*0.6;
+        if(!a.isDragging){a.vx-=imp*nx;a.vy-=imp*ny;a.av+=imp*0.025*(Math.random()-0.5);}
+        if(!b.isDragging){b.vx+=imp*nx;b.vy+=imp*ny;b.av-=imp*0.025*(Math.random()-0.5);}
       }
     }
   }
 }
 
 async function processImage(imgEl) {
-  // 첫 사진 올릴 때 데모 얼굴 제거
-  const demoCount = objects.filter(o => o.isDemo).length;
-  if (demoCount > 0) {
-    const nonDemo = objects.filter(o => !o.isDemo);
+  // 데모 제거
+  if (objects.some(o => o.isDemo)) {
+    const keep = objects.filter(o => !o.isDemo);
     objects.length = 0;
-    nonDemo.forEach(o => objects.push(o));
+    keep.forEach(o => objects.push(o));
   }
 
-  const faces = await detectAndCropFaces(imgEl);
-  if (faces.length === 0) {
-    showToast('얼굴이 안 보여요! 더 가까이 찍은 사진을 써봐요 😅');
+  // 1. 사람 얼굴 먼저
+  let results = await detectHumanFaces(imgEl);
+
+  // 2. 사람 없으면 동물 감지
+  if (results.length === 0 && cocoModel) {
+    results = await detectAnimals(imgEl);
+  }
+
+  if (results.length === 0) {
+    showToast('얼굴이나 동물을 찾지 못했어요 😅');
     return;
   }
-  faces.forEach(face => {
-    const scale = face.targetH / face.cropH;
-    const fw = face.cropW * scale;
-    const fh = face.targetH;
-    const x = fw / 2 + Math.random() * (canvas.width - fw);
-    objects.push(new FaceObject(face.img, x, -fh, fw, fh, false));
+
+  const availH = canvas.height - PANEL_H;
+  results.forEach(r => {
+    const scale = r.targetH / r.cropH;
+    const fw = r.cropW * scale;
+    const fh = r.targetH;
+    const x = fw/2 + Math.random()*(canvas.width-fw);
+    objects.push(new DropObject(r.img, x, -fh, fw, fh, false));
   });
+
   updateFaceCounter();
-  if (faces.length > 1) showToast(`얼굴 ${faces.length}개 발견! 😊`, 'rgba(40,140,70,0.9)');
+
+  const humans = results.filter(r => r.type === 'human').length;
+  const animals = results.filter(r => r.type !== 'human').length;
+
+  if (humans > 0 && animals === 0) {
+    if (humans > 1) showToast(`얼굴 ${humans}개 발견! 😊`, 'rgba(40,140,70,0.9)');
+  } else if (animals > 0 && humans === 0) {
+    const label = results.find(r => r.type !== 'human')?.type === 'cat' ? '고양이' : '강아지';
+    showToast(`${label} 발견! 🐾`, 'rgba(40,140,70,0.9)');
+  } else if (humans > 0 && animals > 0) {
+    showToast(`얼굴 ${humans}개 + 동물 ${animals}마리! 🎉`, 'rgba(40,140,70,0.9)');
+  }
 }
 
 // 갤러리
@@ -894,54 +798,39 @@ fileInput.addEventListener('change', (e) => {
 });
 
 // 카메라
-let stream = null;
-let facingMode = 'environment';
-
+let stream = null, facingMode = 'environment';
 async function startCamera() {
   try {
-    if (stream) stream.getTracks().forEach(t => t.stop());
-    stream = await navigator.mediaDevices.getUserMedia({
-      video: { facingMode, width: { ideal: 1280 }, height: { ideal: 960 } },
-      audio: false
-    });
+    if(stream) stream.getTracks().forEach(t=>t.stop());
+    stream = await navigator.mediaDevices.getUserMedia({ video:{facingMode,width:{ideal:1280},height:{ideal:960}}, audio:false });
     video.srcObject = stream;
-    video.classList.toggle('mirrored', facingMode === 'user');
+    video.classList.toggle('mirrored', facingMode==='user');
     cameraModal.classList.add('open');
-  } catch {
-    alert('카메라 권한이 필요해요.\n설정 > Safari > 카메라를 허용해주세요.');
-  }
+  } catch { alert('카메라 권한이 필요해요.\n설정 > Safari > 카메라를 허용해주세요.'); }
 }
-
 function stopCamera() {
-  if (stream) stream.getTracks().forEach(t => t.stop());
-  stream = null;
-  cameraModal.classList.remove('open');
+  if(stream) stream.getTracks().forEach(t=>t.stop());
+  stream=null; cameraModal.classList.remove('open');
 }
-
 cameraBtn.addEventListener('click', startCamera);
 closeCamBtn.addEventListener('click', stopCamera);
-switchCamBtn.addEventListener('click', () => {
-  facingMode = facingMode === 'environment' ? 'user' : 'environment';
-  startCamera();
-});
+switchCamBtn.addEventListener('click', () => { facingMode=facingMode==='environment'?'user':'environment'; startCamera(); });
 shootBtn.addEventListener('click', () => {
-  const vw = video.videoWidth, vh = video.videoHeight;
-  snapCanvas.width = vw; snapCanvas.height = vh;
-  const sctx = snapCanvas.getContext('2d');
-  if (facingMode === 'user') { sctx.translate(vw, 0); sctx.scale(-1, 1); }
-  sctx.drawImage(video, 0, 0);
-  const img = new Image();
-  img.onload = () => enqueue(img);
-  img.src = snapCanvas.toDataURL('image/jpeg', 0.92);
+  const vw=video.videoWidth, vh=video.videoHeight;
+  snapCanvas.width=vw; snapCanvas.height=vh;
+  const sctx=snapCanvas.getContext('2d');
+  if(facingMode==='user'){sctx.translate(vw,0);sctx.scale(-1,1);}
+  sctx.drawImage(video,0,0);
+  const img=new Image();
+  img.onload=()=>enqueue(img);
+  img.src=snapCanvas.toDataURL('image/jpeg',0.92);
   stopCamera();
 });
 
 shakeMainBtn.addEventListener('click', () => {
   objects.forEach(o => {
-    if (!o.isDragging && o !== selectedObj) {
-      o.vx += (Math.random() - 0.5) * 24;
-      o.vy += (Math.random() - 0.75) * 20;
-      o.av += (Math.random() - 0.5) * 0.4;
+    if(!o.isDragging&&o!==selectedObj){
+      o.vx+=(Math.random()-0.5)*24; o.vy+=(Math.random()-0.75)*20; o.av+=(Math.random()-0.5)*0.4;
     }
   });
 });
@@ -949,123 +838,79 @@ shakeMainBtn.addEventListener('click', () => {
 resetBtn.addEventListener('click', () => confirmModal.classList.add('show'));
 confirmNo.addEventListener('click', () => confirmModal.classList.remove('show'));
 confirmYes.addEventListener('click', () => {
-  objects.length = 0;
-  selectedObj = null;
-  updateSelectRing(null);
-  updateFaceCounter();
-  confirmModal.classList.remove('show');
-  showToast('초기화됐어요 🗑');
-  // 데모 얼굴 다시 스폰
+  objects.length=0; selectedObj=null; updateSelectRing(null); updateFaceCounter();
+  confirmModal.classList.remove('show'); showToast('초기화됐어요 🗑');
   setTimeout(spawnDemoFaces, 300);
 });
 
 // 입력
-let dragTarget = null;
-let longPressTimer = null;
-let isResizing = false;
-let inputStartX = 0, inputStartY = 0;
-let inputMoved = false;
+let dragTarget=null, longPressTimer=null, isResizing=false;
+let inputStartX=0, inputStartY=0, inputMoved=false;
 
-function getPos(e) {
-  if (e.touches) return { x: e.touches[0].clientX, y: e.touches[0].clientY };
-  return { x: e.clientX, y: e.clientY };
-}
+function getPos(e){ if(e.touches) return{x:e.touches[0].clientX,y:e.touches[0].clientY}; return{x:e.clientX,y:e.clientY}; }
 
 function onInputStart(e) {
-  const { x, y } = getPos(e);
-  inputStartX = x; inputStartY = y;
-  inputMoved = false;
-  if (y > canvas.height - PANEL_H) return;
-
-  if (selectedObj && !selectedObj.hitTest(x, y)) {
-    selectedObj.vx = 0; selectedObj.vy = 0;
-    selectedObj = null;
-    updateSelectRing(null);
-    return;
-  }
-
-  if (selectedObj && selectedObj.hitTest(x, y)) {
-    isResizing = true;
-    resizeStartY = y;
-    resizeStartW = selectedObj.w;
-    resizeStartH = selectedObj.h;
-    return;
-  }
-
-  for (let i = objects.length - 1; i >= 0; i--) {
-    if (objects[i].hitTest(x, y)) {
-      dragTarget = objects[i];
-      dragTarget.isDragging = true;
-      dragTarget.vx = 0; dragTarget.vy = 0;
-      dragTarget.lastX = x; dragTarget.lastY = y;
-      longPressTimer = setTimeout(() => {
-        if (!inputMoved && dragTarget) {
-          selectedObj = dragTarget;
-          dragTarget.isDragging = false;
-          dragTarget = null;
-          isResizing = true;
-          resizeStartY = y;
-          resizeStartW = selectedObj.w;
-          resizeStartH = selectedObj.h;
-          updateSelectRing(selectedObj);
-          sizeHint.classList.add('show');
-          setTimeout(() => sizeHint.classList.remove('show'), 1800);
+  const {x,y}=getPos(e); inputStartX=x; inputStartY=y; inputMoved=false;
+  if(y>canvas.height-PANEL_H) return;
+  if(selectedObj&&!selectedObj.hitTest(x,y)){ selectedObj.vx=0;selectedObj.vy=0;selectedObj=null;updateSelectRing(null);return; }
+  if(selectedObj&&selectedObj.hitTest(x,y)){ isResizing=true;resizeStartY=y;resizeStartW=selectedObj.w;resizeStartH=selectedObj.h;return; }
+  for(let i=objects.length-1;i>=0;i--){
+    if(objects[i].hitTest(x,y)){
+      dragTarget=objects[i]; dragTarget.isDragging=true; dragTarget.vx=0;dragTarget.vy=0;
+      dragTarget.lastX=x;dragTarget.lastY=y;
+      longPressTimer=setTimeout(()=>{
+        if(!inputMoved&&dragTarget){
+          selectedObj=dragTarget; dragTarget.isDragging=false; dragTarget=null;
+          isResizing=true;resizeStartY=y;resizeStartW=selectedObj.w;resizeStartH=selectedObj.h;
+          updateSelectRing(selectedObj);sizeHint.classList.add('show');
+          setTimeout(()=>sizeHint.classList.remove('show'),1800);
         }
-      }, 600);
+      },600);
       break;
     }
   }
 }
 
 function onInputMove(e) {
-  if (e.cancelable) e.preventDefault();
-  const { x, y } = getPos(e);
-  if (Math.abs(x - inputStartX) + Math.abs(y - inputStartY) > 8) inputMoved = true;
-
-  if (isResizing && selectedObj) {
-    const dy = y - resizeStartY;
-    const scale = 1 - dy / 200;
-    const newH = Math.max(40, Math.min(canvas.height * 0.6, resizeStartH * scale));
-    const newW = resizeStartW * (newH / resizeStartH);
-    selectedObj.setSize(newW, newH);
-    updateSelectRing(selectedObj);
-    return;
+  if(e.cancelable) e.preventDefault();
+  const {x,y}=getPos(e);
+  if(Math.abs(x-inputStartX)+Math.abs(y-inputStartY)>8) inputMoved=true;
+  if(isResizing&&selectedObj){
+    const dy=y-resizeStartY, scale=1-dy/200;
+    const newH=Math.max(40,Math.min(canvas.height*0.6,resizeStartH*scale));
+    selectedObj.setSize(resizeStartW*(newH/resizeStartH),newH);
+    updateSelectRing(selectedObj); return;
   }
-
-  if (!dragTarget) return;
-  dragTarget.vx = x - dragTarget.lastX;
-  dragTarget.vy = y - dragTarget.lastY;
-  dragTarget.x = x; dragTarget.y = y;
-  dragTarget.lastX = x; dragTarget.lastY = y;
+  if(!dragTarget) return;
+  dragTarget.vx=x-dragTarget.lastX; dragTarget.vy=y-dragTarget.lastY;
+  dragTarget.x=x; dragTarget.y=y; dragTarget.lastX=x; dragTarget.lastY=y;
 }
 
 function onInputEnd() {
-  if (longPressTimer) { clearTimeout(longPressTimer); longPressTimer = null; }
-  isResizing = false;
-  if (dragTarget) { dragTarget.isDragging = false; dragTarget = null; }
+  if(longPressTimer){clearTimeout(longPressTimer);longPressTimer=null;}
+  isResizing=false;
+  if(dragTarget){dragTarget.isDragging=false;dragTarget=null;}
 }
 
 canvas.addEventListener('mousedown', onInputStart);
 canvas.addEventListener('mousemove', onInputMove);
 canvas.addEventListener('mouseup', onInputEnd);
-canvas.addEventListener('touchstart', onInputStart, { passive: false });
-canvas.addEventListener('touchmove', onInputMove, { passive: false });
+canvas.addEventListener('touchstart', onInputStart, {passive:false});
+canvas.addEventListener('touchmove', onInputMove, {passive:false});
 canvas.addEventListener('touchend', onInputEnd);
 
-// 게임 루프
 function loop() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.clearRect(0,0,canvas.width,canvas.height);
   resolveCollisions();
-  objects.forEach(o => { o.update(); o.draw(); });
-  if (selectedObj) updateSelectRing(selectedObj);
+  objects.forEach(o=>{o.update();o.draw();});
+  if(selectedObj) updateSelectRing(selectedObj);
   requestAnimationFrame(loop);
 }
 loop();
 
-// 시작하자마자 데모 얼굴 스폰 + 모델 로딩
 spawnDemoFaces();
 loadModels();
-if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
+if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
 </script>
 </body>
 </html>
